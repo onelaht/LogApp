@@ -1,0 +1,13 @@
+.Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Toolbar {
+    position: relative;
+}
+
+.Layout {
+    padding-top: 10rem;
+    position: relative;
+}
