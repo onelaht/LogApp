@@ -15,6 +15,7 @@
     "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "flexlayout-react": "^0.8.17",
+    "papaparse": "^5.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-scripts": "5.0.1",
@@ -45,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.16"
   }
 }
