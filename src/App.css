@@ -5,6 +5,7 @@
 
 .Toolbar {
     position: relative;
+    padding: 0.125rem;
 }
 
 .Layout {
