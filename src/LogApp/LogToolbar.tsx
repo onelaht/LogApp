@@ -3,7 +3,6 @@ import {useCallback} from "react";
 // mui components
 import {Button, styled} from "@mui/material";
 // csv reader
-import Papa from "papaparse";
 
 export default function LogToolbar() {
     // from MUI docs; hidden file upload form
@@ -18,16 +17,6 @@ export default function LogToolbar() {
         whiteSpace: 'nowrap',
         width: 1,
     });
-    //
-    const onChangedInputHandler = useCallback((e: any) => {
-        Papa.parse(e.target.files?.[0], {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results: any) {
-                console.log(results.data);
-            }
-        })
-    }, [])
     return (
         <>
             <Button
@@ -39,7 +28,7 @@ export default function LogToolbar() {
                 Upload
                 <VisuallyHiddenInput
                     type="file"
-                    onChange={(e:any) => onChangedInputHandler(e)}
+                    onChange={(e:any) => console.log(e.target.files?.text)}
                     accept="csv"
                 />
             </Button>
