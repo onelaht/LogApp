@@ -1,10 +1,19 @@
 // react
-import {useCallback} from "react";
+import {useCallback, useEffect, useState} from "react";
 // mui components
 import {Button, styled} from "@mui/material";
-// csv reader
 
 export default function LogToolbar() {
+    const readInFile = useCallback((data:File | null) => {
+        if(!data || !data?.type.startsWith("text/plain")) return;
+        // read file
+        const reader = new FileReader();
+        reader.onload = () => {
+            console.log(reader.result);
+        }
+        reader.readAsText(data);
+    }, [])
+
     // from MUI docs; hidden file upload form
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -28,7 +37,7 @@ export default function LogToolbar() {
                 Upload
                 <VisuallyHiddenInput
                     type="file"
-                    onChange={(e:any) => console.log(e.target.files?.text)}
+                    onChange={(e:any) => readInFile(e.target.files?.[0])}
                     accept="csv"
                 />
             </Button>
