@@ -3,7 +3,9 @@ import {useCallback, useRef} from "react";
 // flex-layout
 import {Layout, Model} from 'flexlayout-react';
 import 'flexlayout-react/style/light.css';
-import {Layout1} from './FlexLayouts/Layout1';
+import {Layout1} from './Layouts/Layout1';
+// split component
+import LogTable from "./LogTable"
 
 export default function LogLayout() {
     const layoutRef = useRef<Layout | null>(null);
@@ -13,6 +15,7 @@ export default function LogLayout() {
         const component = node.getComponent();
         switch(component) {
             case "Placeholder": return <div>{node.getName()}</div>
+            case "Table": return <LogTable/>
         }
     }, [])
 
