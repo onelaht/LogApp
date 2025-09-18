@@ -34,7 +34,7 @@ export default function LogTable() {
     };
     return (
         // Data Grid will fill the size of the parent container
-        <div style={{ height: "100vh", width: "200%"}}>
+        <div style={{ height: "100vh", width: "100vw"}}>
             <AgGridReact
                 theme={themeAlpine}
                 rowData={rowData}
