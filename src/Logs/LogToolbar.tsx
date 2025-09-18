@@ -1,18 +1,33 @@
 // react
 import {useCallback, useEffect, useState} from "react";
+// global vars
+import { useGrid } from "../Providers/ProviderGrid";
 // mui components
 import {Button, styled} from "@mui/material";
 
 export default function LogToolbar() {
+    const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
+    const { setColDef } = useGrid();
+
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
         // read file
         const reader = new FileReader();
         reader.onload = () => {
-            console.log(reader.result);
+            setRawString(reader.result);
         }
-        reader.readAsText(data);
+        reader.readAsBinaryString(data);
     }, [])
+
+    useEffect(() => {
+        if(!rawString) return;
+        if (typeof rawString === "string") {
+            // split each line
+            const stringLine:string[] = rawString.split("\n");
+            // split based on tab
+            stringLine[1].split("\t").forEach((i) => console.log(i));
+        }
+    }, [rawString])
 
     // from MUI docs; hidden file upload form
     const VisuallyHiddenInput = styled('input')({
@@ -26,6 +41,7 @@ export default function LogToolbar() {
         whiteSpace: 'nowrap',
         width: 1,
     });
+
     return (
         <>
             <Button

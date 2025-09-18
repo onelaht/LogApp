@@ -3,7 +3,7 @@ import {useCallback, useRef} from "react";
 // flex-layout
 import {Layout, Model} from 'flexlayout-react';
 import 'flexlayout-react/style/light.css';
-import {Layout1} from './Layouts/Layout1';
+import {Layout1} from '../Layouts/Layout1';
 // split component
 import LogTable from "./LogTable"
 

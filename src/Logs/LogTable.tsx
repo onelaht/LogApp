@@ -1,12 +1,10 @@
-
+// react
 import { useState } from "react";
+// ag grid: core
 import type { ColDef } from "ag-grid-community";
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
+// ag grid: theme related
 import { themeAlpine } from "ag-grid-community";
-
-// Register all Community features
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function LogTable() {
     interface  IRow {
