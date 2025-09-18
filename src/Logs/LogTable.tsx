@@ -1,12 +1,17 @@
 // react
-import { useState } from "react";
+import {useEffect, useState} from "react";
 // ag grid: core
 import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from 'ag-grid-react';
 // ag grid: theme related
 import { themeAlpine } from "ag-grid-community";
+// global vars
+import { useGrid } from "../Providers/ProviderGrid";
 
 export default function LogTable() {
+    // global vars
+    const { colDef } = useGrid();
+
     interface  IRow {
         make: string;
         model: string;
