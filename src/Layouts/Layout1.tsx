@@ -7,7 +7,7 @@ export const Layout1 = {
             children: [
                 {
                     type: "tab",
-                    name: "test",
+                    name: "Test",
                     component: "Placeholder",
                 }
             ]
@@ -23,8 +23,8 @@ export const Layout1 = {
                 children: [
                     {
                         type: "tab",
-                        name: "One",
-                        component: "Placeholder",
+                        name: "Table",
+                        component: "Table",
                     }
                 ]
             }

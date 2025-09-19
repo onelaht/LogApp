@@ -1,13 +1,17 @@
 .Container {
     display: flex;
     flex-direction: column;
+    height: fit-content;
 }
 
 .Toolbar {
     position: relative;
+    margin: 0.125rem;
+    height: fit-content;
 }
 
 .Layout {
-    padding-top: 10rem;
+    margin-top: auto;
     position: relative;
+    height: 100vh;
 }

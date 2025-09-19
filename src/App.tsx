@@ -1,12 +1,14 @@
 // react
 import React from 'react';
-// split components
-import LogLayout from "./LogApp/LogLayout";
 // styling
 import "./App.css"
-import LogToolbar from "./LogApp/LogToolbar";
+// split components
+import LogLayout from "./Logs/LogLayout";
+import LogToolbar from "./Logs/LogToolbar";
+// global vars
+import ProviderApp from "./Providers/ProviderApp";
 
-function App() {
+function AppInner() {
   return (
       <div className="Container">
           <div className="Toolbar"><LogToolbar/></div>
@@ -15,4 +17,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+    return (
+        <ProviderApp>
+            <AppInner/>
+        </ProviderApp>
+    )
+}
