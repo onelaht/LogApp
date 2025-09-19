@@ -2,7 +2,7 @@
 
 ## Getting started
 
-### `npm start`
+### `npm install`
 
 Install NPM dependencies
 
