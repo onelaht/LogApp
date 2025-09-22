@@ -7,7 +7,7 @@ import {Button, styled} from "@mui/material";
 
 export default function LogToolbar() {
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
-    const { setColDef } = useGrid();
+    const { setGridData } = useGrid();
 
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
@@ -32,8 +32,8 @@ export default function LogToolbar() {
             })
         }
         // assign data as coldef
-        setColDef(extracted);
-    }, [rawString, setColDef])
+        setGridData(extracted);
+    }, [rawString, setGridData])
 
     // from MUI docs; hidden file upload form
     const VisuallyHiddenInput = styled('input')({
