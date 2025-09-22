@@ -37,6 +37,7 @@ export default function LogTable() {
                 // retrieve row data
                 } else {
                     let tempRow:any = {}
+                    if(!gridData[i][0]) continue;
                     // build each row
                     for(let j:number = 0; j < gridData[i].length; j++){
                         tempRow[`${tempCol[j].field}`] = gridData[i][j];
