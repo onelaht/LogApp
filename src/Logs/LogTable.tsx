@@ -1,5 +1,5 @@
 // react
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 // ag grid: core
 import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from 'ag-grid-react';
@@ -10,31 +10,50 @@ import { useGrid } from "../Providers/ProviderGrid";
 
 export default function LogTable() {
     // global vars
-    const { colDef } = useGrid();
-
-    interface  IRow {
-        make: string;
-        model: string;
-        price: number;
-        electric: boolean;
+    const { gridData } = useGrid();
+    //
+    interface IRowCol {
+        [key: string] : string | number;
     }
+    //
+    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>(null)
+    //
+    const [rowData, setRowData] = useState<IRowCol[] | null>(null);
+    //
+    const createGridData = useCallback(() => {
+        if(gridData?.length) {
+            const tempRows:IRowCol[] = [];
+            const tempCol:ColDef<IRowCol>[] = [];
+            for(let i:number = 0; i < gridData.length; i++) {
+                // if empty, skip
+                if(!gridData[i]) continue;
+                // retrieve col header
+                if(i === 0) {
+                    for(let j:number = 0; j < gridData[i].length; j++) {
+                        tempCol.push({"field": gridData[i][j]});
+                    }
+                    // set col header
+                    setColDefs(tempCol);
+                // retrieve row data
+                } else {
+                    let tempRow:any = {}
+                    // build each row
+                    for(let j:number = 0; j < gridData[i].length; j++){
+                        tempRow[`${tempCol[j].field}`] = gridData[i][j];
+                    }
+                    tempRows.push(tempRow);
+                }
+            }
+            // set row data
+            setRowData(tempRows);
+        }
+    }, [gridData])
+    //
+    useEffect(() => {
+        if(!gridData) return;
+        createGridData();
+    }, [gridData])
 
-    // Row Data: The data to be displayed.
-    const [rowData] = useState<IRow[]>([
-        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-        { make: "Ford", model: "F-Series", price: 33850, electric: false },
-        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    ]);
-    // Column Definitions: Defines the columns to be displayed.
-    const [colDefs] = useState<ColDef<IRow>[]>([
-        { field: "make" },
-        { field: "model" },
-        { field: "price" },
-        { field: "electric" }
-    ]);
-    const defaultColDef: ColDef = {
-        flex: 1,
-    };
     return (
         // Data Grid will fill the size of the parent container
         <div style={{ height: "100vh", width: "100vw"}}>
@@ -42,7 +61,6 @@ export default function LogTable() {
                 theme={themeAlpine}
                 rowData={rowData}
                 columnDefs={colDefs}
-                defaultColDef={defaultColDef}
             />
         </div>
     )
