@@ -1,19 +1,33 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func testing(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "hello",
-	})
+type DataReceived struct {
+	UserData [][]string `json:"userData"`
+}
+
+func handleUpload(c *gin.Context) {
+	var data DataReceived
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	for i := 0; i < len(data.UserData); i++ {
+		fmt.Println(data.UserData[i])
+	}
+	c.JSON(http.StatusOK, gin.H{"data": "one"})
 }
 
 func main() {
 	router := gin.Default()
-	router.GET("/test", testing)
-	router.Run(":5000")
+	router.POST("/upload", handleUpload)
+	err := router.Run(":5000")
+	if err != nil {
+		return
+	}
 }
