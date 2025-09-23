@@ -50,9 +50,20 @@ export default function LogTable() {
         }
     }, [gridData])
     //
+
+    const toBackend = useCallback( async () => {
+        await fetch("/api/upload",
+            {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({UserData: gridData})
+            },
+        )
+    }, [gridData])
+
     useEffect(() => {
         if(!gridData) return;
-        createGridData();
+        toBackend();
     }, [gridData])
 
     return (
