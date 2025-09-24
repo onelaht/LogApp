@@ -22,17 +22,11 @@ export default function LogToolbar() {
     useEffect(() => {
         // leave if uploaded data is empty
         if(!rawString) return;
-        // initialize 2d array for split strings
-        const extracted:string[][] = [];
         // if data contains strings
         if (typeof rawString === "string") {
-            // assign split line and tabs
-            rawString.split("\n").forEach((i:string) => {
-                extracted.push(i.split("\t"))
-            })
+            // assign data
+            setGridData(rawString);
         }
-        // assign data as coldef
-        setGridData(extracted);
     }, [rawString, setGridData])
 
     // from MUI docs; hidden file upload form
