@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"example/gin-server/userdata"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type DataReceived struct {
-	UserData [][]string `json:"userData"`
+	UserData string `json:"userData"`
 }
 
 func handleUpload(c *gin.Context) {
@@ -17,9 +17,7 @@ func handleUpload(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	for i := 0; i < len(data.UserData); i++ {
-		fmt.Println(data.UserData[i])
-	}
+	userdata.SplitData(data.UserData)
 	c.JSON(http.StatusOK, gin.H{"data": "one"})
 }
 
