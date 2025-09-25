@@ -1,13 +1,11 @@
 package userdata
 
 import (
-	"fmt"
 	"strings"
 )
 
-func ManageData(data string) {
-	test := setMap(splitData(data))
-	fmt.Println(test[0]["Symbol"])
+func ManageData(data string) []map[string]string {
+	return setMap(splitData(data))
 }
 
 func splitData(data string) [][]string {
@@ -33,6 +31,9 @@ func setMap(data [][]string) []map[string]string {
 		// create map for each row)
 		row := make(map[string]string)
 		for j := 0; j < len(data[i]); j++ {
+			if data[i][0] == "" {
+				continue
+			}
 			row[data[0][j]] = data[i][j]
 		}
 		rows = append(rows, row)
