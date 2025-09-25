@@ -57,8 +57,15 @@ export default function LogTable() {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({UserData: gridData})
-            },
-        )
+            })
+            .then(responseData => {
+                // Use the retrieved data
+                console.log("Data retrieved:", responseData);
+            })
+            .catch(error => {
+                // Handle any errors during the fetch operation
+                console.error("Error during fetch:", error);
+            });
     }, [gridData])
 
     useEffect(() => {
