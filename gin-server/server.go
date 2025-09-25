@@ -17,8 +17,7 @@ func handleUpload(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	userdata.ManageData(data.UserData)
-	c.JSON(http.StatusOK, gin.H{"data": "one"})
+	c.JSON(http.StatusOK, gin.H{"data": userdata.ManageData(data.UserData)})
 }
 
 func main() {
