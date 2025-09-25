@@ -17,7 +17,7 @@ func handleUpload(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	userdata.SplitData(data.UserData)
+	userdata.ManageData(data.UserData)
 	c.JSON(http.StatusOK, gin.H{"data": "one"})
 }
 
