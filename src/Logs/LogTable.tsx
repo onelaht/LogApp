@@ -16,41 +16,132 @@ export default function LogTable() {
         [key: string] : string | number;
     }
     //
-    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>(null)
+    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>([
+        {
+            field: "Account",
+        },
+        {
+            field: "Close Position Quantity",
+        },
+        {
+            field: "Commission (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Commission (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Cumulative Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Cumulative Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Duration",
+        },
+        {
+            field: "Entry DateTime",
+        },
+        {
+            field: "Entry Efficiency",
+        },
+        {
+            field: "Entry Price",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Price"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Exit DateTime",
+        },
+        {
+            field: "Exit Efficiency",
+        },
+        {
+            field: "Exit Price",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Price"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Profit (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Profit (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "High Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["High Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Low Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Low Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Closed Quantity",
+        },
+        {
+            field: "Max Open Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Profit (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Quantity",
+        },
+        {
+            field: "Note",
+        },
+        {
+            field: "Open Position Quantity",
+        },
+        {
+            field: "Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Symbol",
+        },
+        {
+            field: "Total Efficiency",
+        },
+        {
+            field: "Total Efficiency",
+        },
+        {
+            field: "Trade Quantity",
+        },
+        {
+            field: "Trade Type",
+        }
+    ])
     //
     const [rowData, setRowData] = useState<IRowCol[] | null>(null);
-    //
-    const createGridData = useCallback(() => {
-        if(gridData?.length) {
-            const tempRows:IRowCol[] = [];
-            const tempCol:ColDef<IRowCol>[] = [];
-            for(let i:number = 0; i < gridData.length; i++) {
-                // if empty, skip
-                if(!gridData[i]) continue;
-                // retrieve col header
-                if(i === 0) {
-                    for(let j:number = 0; j < gridData[i].length; j++) {
-                        tempCol.push({"field": gridData[i][j]});
-                    }
-                    // set col header
-                    setColDefs(tempCol);
-                // retrieve row data
-                } else {
-                    let tempRow:any = {}
-                    if(!gridData[i][0]) continue;
-                    // build each row
-                    for(let j:number = 0; j < gridData[i].length; j++){
-                        tempRow[`${tempCol[j].field}`] = gridData[i][j];
-                    }
-                    tempRows.push(tempRow);
-                }
-            }
-            // set row data
-            setRowData(tempRows);
-        }
-    }, [gridData])
-    //
 
+    //
     const toBackend = useCallback( async () => {
         await fetch("/api/upload",
             {
@@ -58,15 +149,16 @@ export default function LogTable() {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({UserData: gridData})
             })
-            .then(responseData => {
+            .then(async res => {
                 // Use the retrieved data
-                console.log("Data retrieved:", responseData);
+                const data = await res.json();
+                setRowData(data.data);
             })
             .catch(error => {
                 // Handle any errors during the fetch operation
                 console.error("Error during fetch:", error);
             });
-    }, [gridData])
+    }, [gridData, setRowData])
 
     useEffect(() => {
         if(!gridData) return;
