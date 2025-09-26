@@ -1,5 +1,5 @@
 // react
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 // ag grid: core
 import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from 'ag-grid-react';
@@ -10,31 +10,161 @@ import { useGrid } from "../Providers/ProviderGrid";
 
 export default function LogTable() {
     // global vars
-    const { colDef } = useGrid();
-
-    interface  IRow {
-        make: string;
-        model: string;
-        price: number;
-        electric: boolean;
+    const { gridData } = useGrid();
+    //
+    interface IRowCol {
+        [key: string] : string | number;
     }
+    //
+    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>([
+        {
+            field: "Account",
+        },
+        {
+            field: "Close Position Quantity",
+        },
+        {
+            field: "Commission (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Commission (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Cumulative Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Cumulative Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Duration",
+        },
+        {
+            field: "Entry DateTime",
+        },
+        {
+            field: "Entry Efficiency",
+        },
+        {
+            field: "Entry Price",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Price"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Exit DateTime",
+        },
+        {
+            field: "Exit Efficiency",
+        },
+        {
+            field: "Exit Price",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Price"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Profit (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Profit (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "High Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["High Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Low Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Low Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Closed Quantity",
+        },
+        {
+            field: "Max Open Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Profit (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Quantity",
+        },
+        {
+            field: "Note",
+        },
+        {
+            field: "Open Position Quantity",
+        },
+        {
+            field: "Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Symbol",
+        },
+        {
+            field: "Total Efficiency",
+        },
+        {
+            field: "Total Efficiency",
+        },
+        {
+            field: "Trade Quantity",
+        },
+        {
+            field: "Trade Type",
+        }
+    ])
+    //
+    const [rowData, setRowData] = useState<IRowCol[] | null>(null);
 
-    // Row Data: The data to be displayed.
-    const [rowData] = useState<IRow[]>([
-        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-        { make: "Ford", model: "F-Series", price: 33850, electric: false },
-        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
-    ]);
-    // Column Definitions: Defines the columns to be displayed.
-    const [colDefs] = useState<ColDef<IRow>[]>([
-        { field: "make" },
-        { field: "model" },
-        { field: "price" },
-        { field: "electric" }
-    ]);
-    const defaultColDef: ColDef = {
-        flex: 1,
-    };
+    //
+    const toBackend = useCallback( async () => {
+        await fetch("/api/upload",
+            {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({UserData: gridData})
+            })
+            .then(async res => {
+                // Use the retrieved data
+                const data = await res.json();
+                setRowData(data.data);
+            })
+            .catch(error => {
+                // Handle any errors during the fetch operation
+                console.error("Error during fetch:", error);
+            });
+    }, [gridData, setRowData])
+
+    useEffect(() => {
+        if(!gridData) return;
+        toBackend();
+    }, [gridData])
+
     return (
         // Data Grid will fill the size of the parent container
         <div style={{ height: "100vh", width: "100vw"}}>
@@ -42,7 +172,6 @@ export default function LogTable() {
                 theme={themeAlpine}
                 rowData={rowData}
                 columnDefs={colDefs}
-                defaultColDef={defaultColDef}
             />
         </div>
     )

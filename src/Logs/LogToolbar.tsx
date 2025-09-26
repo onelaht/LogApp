@@ -7,7 +7,7 @@ import {Button, styled} from "@mui/material";
 
 export default function LogToolbar() {
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
-    const { setColDef } = useGrid();
+    const { setGridData } = useGrid();
 
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
@@ -22,18 +22,12 @@ export default function LogToolbar() {
     useEffect(() => {
         // leave if uploaded data is empty
         if(!rawString) return;
-        // initialize 2d array for split strings
-        const extracted:string[][] = [];
         // if data contains strings
         if (typeof rawString === "string") {
-            // assign split line and tabs
-            rawString.split("\n").forEach((i:string) => {
-                extracted.push(i.split("\t"))
-            })
+            // assign data
+            setGridData(rawString);
         }
-        // assign data as coldef
-        setColDef(extracted);
-    }, [rawString, setColDef])
+    }, [rawString, setGridData])
 
     // from MUI docs; hidden file upload form
     const VisuallyHiddenInput = styled('input')({
