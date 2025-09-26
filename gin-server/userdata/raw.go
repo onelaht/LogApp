@@ -36,7 +36,9 @@ func setMap(data [][]string) []map[string]string {
 			}
 			row[data[0][j]] = data[i][j]
 		}
-		rows = append(rows, row)
+		if len(row) > 0 {
+			rows = append(rows, row)
+		}
 	}
 	return rows
 }
