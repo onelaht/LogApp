@@ -16,12 +16,14 @@ export default function LogTable() {
         [key: string] : string | number;
     }
     //
-    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>([
+    const colDefs:ColDef<IRowCol>[] = useMemo(() => [
         {
             field: "Account",
+            cellDataType: "number",
         },
         {
             field: "Close Position Quantity",
+            cellDataType: "number",
         },
         {
             field: "Commission (C)",
@@ -37,12 +39,15 @@ export default function LogTable() {
         },
         {
             field: "Duration",
+            cellDataType: "text",
         },
         {
             field: "Entry DateTime",
+            cellDataType: "dateTimeString",
         },
         {
             field: "Entry Efficiency",
+            cellDataType: "number",
         },
         {
             field: "Entry Price",
@@ -52,9 +57,11 @@ export default function LogTable() {
         },
         {
             field: "Exit DateTime",
+            cellDataType: "dateTimeString",
         },
         {
             field: "Exit Efficiency",
+            cellDataType: "number",
         },
         {
             field: "Exit Price",
@@ -94,6 +101,7 @@ export default function LogTable() {
         },
         {
             field: "Max Closed Quantity",
+            cellDataType: "number",
         },
         {
             field: "Max Open Loss (C)",
@@ -109,12 +117,15 @@ export default function LogTable() {
         },
         {
             field: "Max Open Quantity",
+            cellDataType: "number",
         },
         {
             field: "Note",
+            cellDataType: "text",
         },
         {
             field: "Open Position Quantity",
+            cellDataType: "number",
         },
         {
             field: "Profit/Loss (C)",
@@ -124,20 +135,25 @@ export default function LogTable() {
         },
         {
             field: "Symbol",
+            cellDataType: "text",
         },
         {
             field: "Total Efficiency",
+            cellDataType: "number",
         },
         {
             field: "Total Efficiency",
+            cellDataType: "number",
         },
         {
             field: "Trade Quantity",
+            cellDataType: "number",
         },
         {
             field: "Trade Type",
+            cellDataType: "text",
         }
-    ])
+    ], [])
     //
     const [rowData, setRowData] = useState<IRowCol[] | null>(null);
 
