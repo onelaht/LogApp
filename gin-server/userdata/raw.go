@@ -34,11 +34,30 @@ func setMap(data [][]string) []map[string]string {
 			if data[i][0] == "" {
 				continue
 			}
-			row[data[0][j]] = data[i][j]
+			row[data[0][j]] = adjustFormatting(data[0][j], data[i][j])
 		}
 		if len(row) > 0 {
 			rows = append(rows, row)
 		}
 	}
 	return rows
+}
+
+func adjustFormatting(colType string, colValue string) string {
+	switch colType {
+	case "Entry DateTime":
+		return adjustEndString(colValue, " BP")
+	case "Exit DateTime":
+		return adjustEndString(colValue, " EP")
+	default:
+		return colValue
+	}
+}
+
+func adjustEndString(colValue string, value string) string {
+	after, found := strings.CutSuffix(colValue, value)
+	if found {
+		return after
+	}
+	return colValue
 }
