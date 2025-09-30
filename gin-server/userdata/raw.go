@@ -52,6 +52,10 @@ func adjustFormatting(colType string, colValue string) string {
 	case "Exit DateTime":
 		return adjustEndString(colValue, " EP")
 	case "Entry Efficiency":
+		fallthrough
+	case "Exit Efficiency":
+		fallthrough
+	case "Total Efficiency":
 		return adjustPercentage(colValue)
 	default:
 		return colValue
