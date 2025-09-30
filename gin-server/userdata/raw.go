@@ -48,9 +48,9 @@ func setMap(data [][]string) []map[string]string {
 func adjustFormatting(colType string, colValue string) string {
 	switch colType {
 	case "Entry DateTime":
-		return adjustEndString(colValue, " BP")
+		return strings.TrimRight(colValue, " BP")
 	case "Exit DateTime":
-		return adjustEndString(colValue, " EP")
+		return strings.TrimRight(colValue, " EP")
 	case "Entry Efficiency":
 		fallthrough
 	case "Exit Efficiency":
@@ -62,15 +62,7 @@ func adjustFormatting(colType string, colValue string) string {
 	}
 }
 
-func adjustEndString(colValue string, value string) string {
-	after, found := strings.CutSuffix(colValue, value)
-	if found {
-		return after
-	}
-	return colValue
-}
-
 func adjustPercentage(colValue string) string {
-	casted, _ := strconv.ParseFloat(adjustEndString(colValue, "%"), 32)
+	casted, _ := strconv.ParseFloat(strings.TrimRight(colValue, "%"), 32)
 	return strconv.FormatFloat(casted*0.01, 'g', -1, 32)
 }
