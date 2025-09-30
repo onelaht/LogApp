@@ -18,39 +18,24 @@ export default function LogTable() {
     //
     const colDefs:ColDef<IRowCol>[] = useMemo(() => [
         {
-            field: "Account",
-            cellDataType: "number",
+            field: "Entry DateTime",
+            cellDataType: "dateTimeString",
         },
         {
-            field: "Close Position Quantity",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseInt(p.data?.["Close Position Quantity"])}
-        },
-        {
-            field: "Commission (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Commission (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Cumulative Profit/Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Cumulative Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+            field: "Exit DateTime",
+            cellDataType: "dateTimeString",
         },
         {
             field: "Duration",
             cellDataType: "text",
         },
         {
-            field: "Entry DateTime",
-            cellDataType: "dateTimeString",
+            field: "Symbol",
+            cellDataType: "text",
         },
         {
-            field: "Entry Efficiency",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Efficiency"])},
-            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
+            field: "Trade Type",
+            cellDataType: "text",
         },
         {
             field: "Entry Price",
@@ -59,8 +44,77 @@ export default function LogTable() {
             valueFormatter: (p) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "Exit DateTime",
-            cellDataType: "dateTimeString",
+            field: "Exit Price",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Price"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Low Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Low Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "High Price While Open",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["High Price While Open"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Profit (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Max Open Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Commission (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Commission (C)"])},
+            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Trade Quantity",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Trade Quantity"])}
+        },
+        {
+            field: "Open Position Quantity",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Open Position Quantity"])}
+        },
+        {
+            field: "Close Position Quantity",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Close Position Quantity"])}
+        },
+        {
+            field: "Max Open Quantity",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Max Open Quantity"])}
+        },
+        {
+            field: "Max Closed Quantity",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Max Closed Quantity"])}
+        },
+        {
+            field: "Entry Efficiency",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
         },
         {
             field: "Exit Efficiency",
@@ -69,9 +123,15 @@ export default function LogTable() {
             valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
         },
         {
-            field: "Exit Price",
+            field: "Total Efficiency",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Price"])},
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Total Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
+        },
+        {
+            field: "FlatToFlat Profit/Loss (C)",
+            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
             valueFormatter: (p) => {return (p.value?.toFixed(2))}
         },
         {
@@ -87,79 +147,9 @@ export default function LogTable() {
             valueFormatter: (p) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "FlatToFlat Profit/Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "High Price While Open",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["High Price While Open"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Low Price While Open",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Low Price While Open"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Max Closed Quantity",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseInt(p.data?.["Max Closed Quantity"])}
-        },
-        {
-            field: "Max Open Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Max Open Profit (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Max Open Quantity",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseInt(p.data?.["Max Open Quantity"])}
-        },
-        {
             field: "Note",
             cellDataType: "text",
         },
-        {
-            field: "Open Position Quantity",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseInt(p.data?.["Open Position Quantity"])}
-        },
-        {
-            field: "Profit/Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Symbol",
-            cellDataType: "text",
-        },
-        {
-            field: "Total Efficiency",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Total Efficiency"])},
-            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
-        },
-        {
-            field: "Trade Quantity",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseInt(p.data?.["Trade Quantity"])}
-        },
-        {
-            field: "Trade Type",
-            cellDataType: "text",
-        }
     ], [])
     //
     const [rowData, setRowData] = useState<IRowCol[] | null>(null);
