@@ -24,6 +24,7 @@ export default function LogTable() {
         {
             field: "Close Position Quantity",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Close Position Quantity"])}
         },
         {
             field: "Commission (C)",
@@ -48,6 +49,8 @@ export default function LogTable() {
         {
             field: "Entry Efficiency",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
         },
         {
             field: "Entry Price",
@@ -62,6 +65,8 @@ export default function LogTable() {
         {
             field: "Exit Efficiency",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
         },
         {
             field: "Exit Price",
@@ -102,6 +107,7 @@ export default function LogTable() {
         {
             field: "Max Closed Quantity",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Max Closed Quantity"])}
         },
         {
             field: "Max Open Loss (C)",
@@ -118,6 +124,7 @@ export default function LogTable() {
         {
             field: "Max Open Quantity",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Max Open Quantity"])}
         },
         {
             field: "Note",
@@ -126,6 +133,7 @@ export default function LogTable() {
         {
             field: "Open Position Quantity",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Open Position Quantity"])}
         },
         {
             field: "Profit/Loss (C)",
@@ -140,14 +148,13 @@ export default function LogTable() {
         {
             field: "Total Efficiency",
             cellDataType: "number",
-        },
-        {
-            field: "Total Efficiency",
-            cellDataType: "number",
+            valueGetter: (p:any) => {return parseFloat(p.data?.["Total Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value * 100).toFixed(2) + "%"}
         },
         {
             field: "Trade Quantity",
             cellDataType: "number",
+            valueGetter: (p:any) => {return parseInt(p.data?.["Trade Quantity"])}
         },
         {
             field: "Trade Type",
@@ -169,6 +176,7 @@ export default function LogTable() {
                 // Use the retrieved data
                 const data = await res.json();
                 setRowData(data.data);
+                console.log(data.data);
             })
             .catch(error => {
                 // Handle any errors during the fetch operation
