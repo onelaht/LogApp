@@ -2,8 +2,6 @@ package userdata
 
 import (
 	"strings"
-
-	"strconv"
 )
 
 func ManageData(data string) []map[string]string {
@@ -56,13 +54,8 @@ func adjustFormatting(colType string, colValue string) string {
 	case "Exit Efficiency":
 		fallthrough
 	case "Total Efficiency":
-		return adjustPercentage(colValue)
+		return strings.TrimRight(colValue, "%")
 	default:
 		return colValue
 	}
-}
-
-func adjustPercentage(colValue string) string {
-	casted, _ := strconv.ParseFloat(strings.TrimRight(colValue, "%"), 32)
-	return strconv.FormatFloat(casted*0.01, 'g', -1, 32)
 }
