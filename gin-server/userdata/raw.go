@@ -4,11 +4,23 @@ import (
 	"strings"
 )
 
+// ManageData
+// converts user file (raw data) to array of maps
+// - returns split data of userfile
+// - returns nil if empty
 func ManageData(data string) []map[string]string {
 	return setMap(splitData(data))
 }
 
+// splitData
+// splits by newline and then by tabs
+// - returns double array of split data
+// - returns nil if empty
 func splitData(data string) [][]string {
+	// if empty, return nil
+	if len(data) < 1 {
+		return nil
+	}
 	var splitByTab [][]string
 	newLine := strings.Split(data, "\n")
 	// traverse through each line
@@ -19,6 +31,11 @@ func splitData(data string) [][]string {
 	return splitByTab
 }
 
+// setMap
+// initializes array of maps
+// - mimics python dictionary; where var["Account"] contains account name
+// - returns split data as array of maps
+// - returns nil if empty
 func setMap(data [][]string) []map[string]string {
 	// if empty, return
 	if data == nil {
@@ -26,19 +43,44 @@ func setMap(data [][]string) []map[string]string {
 	}
 	// create array of map (store all rows)
 	var rows []map[string]string
-	// traverse through each row (exception to col headers)
+	// traverse through each tuple (exception to col headers)
 	for i := 1; i < len(data); i++ {
 		// create map for each row)
 		row := make(map[string]string)
+		// loop through each attribute
 		for j := 0; j < len(data[i]); j++ {
+			// if empty, skip tuple
 			if data[i][0] == "" {
 				continue
 			}
-			row[data[0][j]] = data[i][j]
+			// fix formatting and set to individual tuple map
+			row[data[0][j]] = adjustFormatting(data[0][j], data[i][j])
 		}
+		// append individual tuple map to array
 		if len(row) > 0 {
 			rows = append(rows, row)
 		}
 	}
 	return rows
+}
+
+// adjustFormatting
+// - removes additional values from specific column types
+// - returns adjusted values
+// - returns same value if case is not specified
+func adjustFormatting(colType string, colValue string) string {
+	switch colType {
+	case "Entry DateTime":
+		return strings.TrimRight(colValue, " BP")
+	case "Exit DateTime":
+		return strings.TrimRight(colValue, " EP")
+	case "Entry Efficiency":
+		fallthrough
+	case "Exit Efficiency":
+		fallthrough
+	case "Total Efficiency":
+		return strings.TrimRight(colValue, "%")
+	default:
+		return colValue
+	}
 }

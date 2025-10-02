@@ -1,7 +1,7 @@
 // react
 import {useCallback, useEffect, useMemo, useState} from "react";
 // ag grid: core
-import type { ColDef } from "ag-grid-community";
+import type {ColDef, ValueGetterParams, ValueFormatterParams} from "ag-grid-community";
 import { AgGridReact } from 'ag-grid-react';
 // ag grid: theme related
 import { themeAlpine } from "ag-grid-community";
@@ -11,162 +11,258 @@ import { useGrid } from "../Providers/ProviderGrid";
 export default function LogTable() {
     // global vars
     const { gridData } = useGrid();
-    //
+
+    // interface for grid columns
     interface IRowCol {
         [key: string] : string | number;
     }
-    //
-    const [colDefs, setColDefs] = useState<ColDef<IRowCol>[] | null>([
+
+    // definitions of grid columns
+    // - specifies data type used
+    // - specifies filter type
+    // - implements apply and reset butttons
+    const colDefs:ColDef<IRowCol>[] = useMemo(() => [
         {
-            field: "Account",
+            field: "Entry DateTime",
+            cellDataType: "dateTimeString",
+            filter: "agDateColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
         },
         {
-            field: "Close Position Quantity",
-        },
-        {
-            field: "Commission (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Commission (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Cumulative Profit/Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Cumulative Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+            field: "Exit DateTime",
+            cellDataType: "dateTimeString",
+            filter: "agDateColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
         },
         {
             field: "Duration",
+            cellDataType: "text",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
         },
         {
-            field: "Entry DateTime",
+            field: "Symbol",
+            cellDataType: "text",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
         },
         {
-            field: "Entry Efficiency",
+            field: "Trade Type",
+            cellDataType: "text",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
         },
         {
             field: "Entry Price",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Entry Price"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Exit DateTime",
-        },
-        {
-            field: "Exit Efficiency",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Entry Price"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
             field: "Exit Price",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Exit Price"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "FlatToFlat Max Open Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "FlatToFlat Max Open Profit (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Max Open Profit (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "FlatToFlat Profit/Loss (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "High Price While Open",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["High Price While Open"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Exit Price"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
             field: "Low Price While Open",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Low Price While Open"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Low Price While Open"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "Max Closed Quantity",
-        },
-        {
-            field: "Max Open Loss (C)",
+            field: "High Price While Open",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Max Open Profit (C)",
-            cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
-        },
-        {
-            field: "Max Open Quantity",
-        },
-        {
-            field: "Note",
-        },
-        {
-            field: "Open Position Quantity",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["High Price While Open"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
             field: "Profit/Loss (C)",
             cellDataType: "number",
-            valueGetter: (p:any) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
-            valueFormatter: (p) => {return (p.value?.toFixed(2))}
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Profit/Loss (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "Symbol",
+            field: "Max Open Profit (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Max Open Profit (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "Total Efficiency",
+            field: "Max Open Loss (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Max Open Loss (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
-            field: "Total Efficiency",
+            field: "Commission (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Commission (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
         },
         {
             field: "Trade Quantity",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Trade Quantity"])}
         },
         {
-            field: "Trade Type",
-        }
-    ])
-    //
+            field: "Open Position Quantity",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Open Position Quantity"])}
+        },
+        {
+            field: "Close Position Quantity",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Close Position Quantity"])}
+        },
+        {
+            field: "Max Open Quantity",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Max Open Quantity"])}
+        },
+        {
+            field: "Max Closed Quantity",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            filterParams: {
+                buttons: ["apply", "reset"],
+            },
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Max Closed Quantity"])}
+        },
+        {
+            field: "Entry Efficiency",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Entry Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value).toFixed(2) + "%"}
+        },
+        {
+            field: "Exit Efficiency",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Exit Efficiency"])},
+            valueFormatter: (p:any) => {return (p.value).toFixed(2) + "%"}
+        },
+        {
+            field: "Total Efficiency",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["Total Efficiency"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value).toFixed(2) + "%"}
+        },
+        {
+            field: "FlatToFlat Profit/Loss (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["FlatToFlat Profit/Loss (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Loss (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["FlatToFlat Max Open Loss (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "FlatToFlat Max Open Profit (C)",
+            cellDataType: "number",
+            filter: "agNumberColumnFilter",
+            valueGetter: (p:ValueGetterParams) => {return parseFloat(p.data?.["FlatToFlat Max Open Profit (C)"])},
+            valueFormatter: (p:ValueFormatterParams) => {return (p.value?.toFixed(2))}
+        },
+        {
+            field: "Note",
+            cellDataType: "text",
+        },
+    ], [])
+
+    // store row/tuple data
     const [rowData, setRowData] = useState<IRowCol[] | null>(null);
 
-    //
+    // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
+        // send raw file
         await fetch("/api/upload",
             {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({UserData: gridData})
             })
+            // retrieve data and assign as row data
             .then(async res => {
-                // Use the retrieved data
+
                 const data = await res.json();
                 setRowData(data.data);
             })
+            // handle any error that occurs
             .catch(error => {
-                // Handle any errors during the fetch operation
                 console.error("Error during fetch:", error);
             });
     }, [gridData, setRowData])
 
+    // if user uploads a file, call toBackend (send data to backend)
     useEffect(() => {
         if(!gridData) return;
         toBackend();
     }, [gridData])
 
     return (
-        // Data Grid will fill the size of the parent container
         <div style={{ height: "100vh", width: "100vw"}}>
             <AgGridReact
                 theme={themeAlpine}
