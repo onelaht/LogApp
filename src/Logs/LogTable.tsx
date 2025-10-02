@@ -11,11 +11,16 @@ import { useGrid } from "../Providers/ProviderGrid";
 export default function LogTable() {
     // global vars
     const { gridData } = useGrid();
-    //
+
+    // interface for grid columns
     interface IRowCol {
         [key: string] : string | number;
     }
-    //
+
+    // definitions of grid columns
+    // - specifies data type used
+    // - specifies filter type
+    // - implements apply and reset butttons
     const colDefs:ColDef<IRowCol>[] = useMemo(() => [
         {
             field: "Entry DateTime",
@@ -36,7 +41,6 @@ export default function LogTable() {
         {
             field: "Duration",
             cellDataType: "text",
-            //
             filterParams: {
                 buttons: ["apply", "reset"],
             },
@@ -44,7 +48,6 @@ export default function LogTable() {
         {
             field: "Symbol",
             cellDataType: "text",
-            //
             filterParams: {
                 buttons: ["apply", "reset"],
             },
@@ -52,7 +55,6 @@ export default function LogTable() {
         {
             field: "Trade Type",
             cellDataType: "text",
-            //
             filterParams: {
                 buttons: ["apply", "reset"],
             },
@@ -229,36 +231,38 @@ export default function LogTable() {
             cellDataType: "text",
         },
     ], [])
-    //
+
+    // store row/tuple data
     const [rowData, setRowData] = useState<IRowCol[] | null>(null);
 
-    //
+    // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
+        // send raw file
         await fetch("/api/upload",
             {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({UserData: gridData})
             })
+            // retrieve data and assign as row data
             .then(async res => {
-                // Use the retrieved data
+
                 const data = await res.json();
                 setRowData(data.data);
-                console.log(data.data);
             })
+            // handle any error that occurs
             .catch(error => {
-                // Handle any errors during the fetch operation
                 console.error("Error during fetch:", error);
             });
     }, [gridData, setRowData])
 
+    // if user uploads a file, call toBackend (send data to backend)
     useEffect(() => {
         if(!gridData) return;
         toBackend();
     }, [gridData])
 
     return (
-        // Data Grid will fill the size of the parent container
         <div style={{ height: "100vh", width: "100vw"}}>
             <AgGridReact
                 theme={themeAlpine}
