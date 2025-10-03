@@ -7,21 +7,18 @@ import { AgGridReact } from 'ag-grid-react';
 import { themeAlpine } from "ag-grid-community";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
+//
+import { Row } from "../Types/types";
 
 export default function LogTable() {
     // global vars
-    const { gridData } = useGrid();
-
-    // interface for grid columns
-    interface IRowCol {
-        [key: string] : string | number;
-    }
+    const { gridRef, gridData } = useGrid();
 
     // definitions of grid columns
     // - specifies data type used
     // - specifies filter type
     // - implements apply and reset butttons
-    const colDefs:ColDef<IRowCol>[] = useMemo(() => [
+    const colDefs:ColDef<Row>[] = useMemo(() => [
         {
             field: "Entry DateTime",
             cellDataType: "dateTimeString",
@@ -233,7 +230,13 @@ export default function LogTable() {
     ], [])
 
     // store row/tuple data
-    const [rowData, setRowData] = useState<IRowCol[] | null>(null);
+    const [rowData, setRowData] = useState<Row[] | null>(null);
+
+    useEffect(() => {
+        console.log("here")
+        if(gridRef.current)
+            console.log(gridRef.current);
+    }, [gridRef])
 
     // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
@@ -265,6 +268,7 @@ export default function LogTable() {
     return (
         <div style={{ height: "100vh", width: "100vw"}}>
             <AgGridReact
+                ref={gridRef}
                 theme={themeAlpine}
                 rowData={rowData}
                 columnDefs={colDefs}
