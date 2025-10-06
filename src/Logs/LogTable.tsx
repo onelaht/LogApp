@@ -9,6 +9,8 @@ import { themeAlpine } from "ag-grid-community";
 import { useGrid } from "../Providers/ProviderGrid";
 //
 import { Row } from "../Types/types";
+// custom filter
+import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
 
 export default function LogTable() {
     // global vars
@@ -45,6 +47,7 @@ export default function LogTable() {
         {
             field: "Symbol",
             cellDataType: "text",
+            filter: FilterCheckboxSet,
             filterParams: {
                 buttons: ["apply", "reset"],
             },
@@ -231,13 +234,7 @@ export default function LogTable() {
 
     // store row/tuple data
     const [rowData, setRowData] = useState<Row[] | null>(null);
-
-    useEffect(() => {
-        console.log("here")
-        if(gridRef.current)
-            console.log(gridRef.current);
-    }, [gridRef])
-
+    
     // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
         // send raw file
