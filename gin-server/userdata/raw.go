@@ -70,6 +70,12 @@ func setMap(data [][]string) []map[string]string {
 // - returns same value if case is not specified
 func adjustFormatting(colType string, colValue string) string {
 	switch colType {
+	case "Symbol":
+		before, _, found := strings.Cut(colValue, " ")
+		if found {
+			return before
+		}
+		return colValue
 	case "Entry DateTime":
 		return strings.TrimRight(colValue, " BP")
 	case "Exit DateTime":
