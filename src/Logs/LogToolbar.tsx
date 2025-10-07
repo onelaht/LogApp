@@ -9,8 +9,6 @@ export default function LogToolbar() {
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
     const { gridRef, setGridData } = useGrid();
 
-
-
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
         // read file
