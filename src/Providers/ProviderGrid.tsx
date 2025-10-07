@@ -12,7 +12,7 @@ const GridContext = createContext<IGridContextType | null>(null);
 
 export default function ProviderGrid({children}:{children: ReactNode}) {
     const gridRef = useRef<AgGridReact<Row> | null>(null);
-    const [gridData, setGridData] = useState<string | null>(null)
+    const [gridData, setGridData] = useState<string | null>(null);
     return(
         <GridContext value={{gridRef, gridData, setGridData}}>
             {children}
