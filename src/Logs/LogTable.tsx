@@ -7,6 +7,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { themeAlpine } from "ag-grid-community";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
+import { useFilter } from "../Providers/ProviderFilter";
 //
 import { Row } from "../Types/types";
 // custom filter
@@ -15,6 +16,7 @@ import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
 export default function LogTable() {
     // global vars
     const { gridRef, gridData } = useGrid();
+    const { setUniqueAccount, setUniqueSymbol } = useFilter();
 
     // definitions of grid columns
     // - specifies data type used
@@ -234,7 +236,7 @@ export default function LogTable() {
 
     // store row/tuple data
     const [rowData, setRowData] = useState<Row[] | null>(null);
-    
+
     // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
         // send raw file
@@ -246,9 +248,11 @@ export default function LogTable() {
             })
             // retrieve data and assign as row data
             .then(async res => {
-
                 const data = await res.json();
-                setRowData(data.data);
+                // assign data
+                data?.data && setRowData(data.data);
+                data?.uSymbol && setUniqueSymbol(data.uSymbol);
+                data?.uAccount && setUniqueAccount(data.uAccount);
             })
             // handle any error that occurs
             .catch(error => {
