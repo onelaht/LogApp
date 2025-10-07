@@ -22,7 +22,12 @@ func handleUpload(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": userdata.ManageData(data.UserData)})
+	relation, uSymbol, uAccount := userdata.ManageData(data.UserData)
+	c.JSON(http.StatusOK, gin.H{
+		"data":     relation,
+		"uSymbol":  uSymbol,
+		"uAccount": uAccount,
+	})
 }
 
 // contains endpoint initialization and handlers
