@@ -50,16 +50,11 @@ export default function LogTable() {
             field: "Symbol",
             cellDataType: "text",
             filter: FilterCheckboxSet,
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
         },
         {
             field: "Trade Type",
             cellDataType: "text",
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
+            filter: FilterCheckboxSet,
         },
         {
             field: "Entry Price",
