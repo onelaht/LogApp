@@ -1,25 +1,34 @@
 // react
 import React, {useCallback, useEffect, useState} from 'react';
 // ag grid
-import {CustomFilterProps} from "ag-grid-react";
+import {CustomFilterCallbacks, CustomFilterProps, useGridFilter} from "ag-grid-react";
 // global vars
 import {useFilter} from "../Providers/ProviderFilter";
 // mui components
 import {Button, Checkbox, FormControlLabel, FormGroup} from "@mui/material";
 // styling
 import '../Filters/FilterCheckboxSet.css'
+import {DoesFilterPassParams} from "ag-grid-community";
 
 export default function FilterCheckboxSet ({model, onModelChange, getValue, colDef}: CustomFilterProps) {
 
     const { retrieveColSet } = useFilter();
-    const [set, setSet] = useState<string[] | null>(null)
+    const [set] = useState(retrieveColSet(colDef?.field))
+    const [map, setMap] = useState(new Map<string, boolean>());
 
-    const handleChange = useCallback((e:any) => {
-        console.log(e?.target?.checked);
+    // initialize map
+    useEffect(() => {
+        let tempMap = new Map<string, boolean>();
+        set?.forEach((v) => {
+            tempMap.set(v, true)
+        })
+        setMap(tempMap);
     }, [])
 
-    useEffect(():void => {
-        setSet(retrieveColSet(colDef?.field))
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>)=> {
+        if(e.target.id === "all") {
+
+        }
     }, [])
 
     return (
@@ -27,7 +36,7 @@ export default function FilterCheckboxSet ({model, onModelChange, getValue, colD
             <FormGroup className="FormGroupContainer">
                 <FormControlLabel
                     control={
-                        <Checkbox size="small" onChange={handleChange}/>
+                        <Checkbox id="all" size="small" onChange={handleChange}/>
                     }
                     label="All"
                 />
