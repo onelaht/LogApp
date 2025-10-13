@@ -7,21 +7,22 @@ import { AgGridReact } from 'ag-grid-react';
 import { themeAlpine } from "ag-grid-community";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
+import { useFilter } from "../Providers/ProviderFilter";
+// types
+import { Row } from "../Types/Row";
+// custom filter
+import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
 
 export default function LogTable() {
     // global vars
-    const { gridData } = useGrid();
-
-    // interface for grid columns
-    interface IRowCol {
-        [key: string] : string | number;
-    }
+    const { gridRef, gridData } = useGrid();
+    const { setUniqueAccount, setUniqueSymbol } = useFilter();
 
     // definitions of grid columns
     // - specifies data type used
     // - specifies filter type
     // - implements apply and reset butttons
-    const colDefs:ColDef<IRowCol>[] = useMemo(() => [
+    const colDefs:ColDef<Row>[] = useMemo(() => [
         {
             field: "Entry DateTime",
             cellDataType: "dateTimeString",
@@ -48,16 +49,12 @@ export default function LogTable() {
         {
             field: "Symbol",
             cellDataType: "text",
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
+            filter: FilterCheckboxSet,
         },
         {
             field: "Trade Type",
             cellDataType: "text",
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
+            filter: FilterCheckboxSet,
         },
         {
             field: "Entry Price",
@@ -233,7 +230,7 @@ export default function LogTable() {
     ], [])
 
     // store row/tuple data
-    const [rowData, setRowData] = useState<IRowCol[] | null>(null);
+    const [rowData, setRowData] = useState<Row[] | null>(null);
 
     // sends raw file to backend and retrieves split array
     const toBackend = useCallback( async () => {
@@ -246,15 +243,17 @@ export default function LogTable() {
             })
             // retrieve data and assign as row data
             .then(async res => {
-
                 const data = await res.json();
-                setRowData(data.data);
+                // assign data
+                data?.data && setRowData(data.data);
+                data?.uSymbol && setUniqueSymbol(data.uSymbol);
+                data?.uAccount && setUniqueAccount(data.uAccount);
             })
             // handle any error that occurs
             .catch(error => {
                 console.error("Error during fetch:", error);
             });
-    }, [gridData, setRowData])
+    }, [gridData, setUniqueAccount, setUniqueSymbol])
 
     // if user uploads a file, call toBackend (send data to backend)
     useEffect(() => {
@@ -265,6 +264,7 @@ export default function LogTable() {
     return (
         <div style={{ height: "100vh", width: "100vw"}}>
             <AgGridReact
+                ref={gridRef}
                 theme={themeAlpine}
                 rowData={rowData}
                 columnDefs={colDefs}

@@ -1,0 +1,9 @@
+.FormContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.FormGroupContainer {
+    align-self: flex-start;
+    padding-left: 1rem;
+}

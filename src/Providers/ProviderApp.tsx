@@ -1,5 +1,8 @@
-import ProviderGrid from "./ProviderGrid";
+// react
 import {ReactNode} from "react";
+// providers wrapped
+import ProviderFilter from "./ProviderFilter";
+import ProviderGrid from "./ProviderGrid";
 
 interface IProviderAppType{
     children: ReactNode;
@@ -8,7 +11,9 @@ interface IProviderAppType{
 export default function ProviderApp({children}:IProviderAppType) {
     return (
         <ProviderGrid>
-            {children}
+            <ProviderFilter>
+                {children}
+            </ProviderFilter>
         </ProviderGrid>
     )
 }

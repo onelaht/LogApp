@@ -14,13 +14,21 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ## Screenshots (feature branch implementations)  
 
-Example of column filter (DateTime filter)  
-![1.jpg](src/Screenshots/1.jpg)  
+All unchecked  
+![2025-10-13-12-04-36-sc.jpg](src/Screenshots/2025-10-13-12-04-36-sc.jpg)  
 <br>  
 <br>  
-Entry DateTime sorted as ascending    
-![2.jpg](src/Screenshots/2.jpg)  
+All checked  
+![2025-10-13-12-04-42-sc.jpg](src/Screenshots/2025-10-13-12-04-42-sc.jpg)   
 <br>  
 <br>  
-Entry DateTime sorted as descending  
-![3.jpg](src/Screenshots/3.jpg)  
+One set checked  
+![2025-10-13-12-04-51-sc.jpg](src/Screenshots/2025-10-13-12-04-51-sc.jpg)  
+<br>  
+<br>  
+Two sets checked  
+![2025-10-13-12-05-01-sc.jpg](src/Screenshots/2025-10-13-12-05-01-sc.jpg)  
+<br>  
+<br>  
+Two columns utilizing filter set (Symbol: checked 2 sets, Type: Short)  
+![2025-10-13-12-05-12-sc.jpg](src/Screenshots/2025-10-13-12-05-12-sc.jpg)  

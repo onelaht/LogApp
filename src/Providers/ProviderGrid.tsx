@@ -1,6 +1,12 @@
-import React, {createContext, ReactNode, useContext, useState} from 'react';
+// react
+import React, {createContext, ReactNode, useContext, useRef, useState} from 'react';
+// types
+import type { Row } from "../Types/Row"
+// ag grid
+import {AgGridReact} from "ag-grid-react";
 
 interface IGridContextType {
+    gridRef: React.RefObject<AgGridReact<Row> | null>;
     gridData: string | null;
     setGridData: React.Dispatch<React.SetStateAction<string | null>>;
 }
@@ -8,9 +14,10 @@ interface IGridContextType {
 const GridContext = createContext<IGridContextType | null>(null);
 
 export default function ProviderGrid({children}:{children: ReactNode}) {
-    const [gridData, setGridData] = useState<string | null>(null)
+    const gridRef = useRef<AgGridReact<Row> | null>(null);
+    const [gridData, setGridData] = useState<string | null>(null);
     return(
-        <GridContext value={{gridData, setGridData}}>
+        <GridContext value={{gridRef, gridData, setGridData}}>
             {children}
         </GridContext>
     )
