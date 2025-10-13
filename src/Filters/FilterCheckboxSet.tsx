@@ -1,56 +1,43 @@
 // react
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 // ag grid
-import {CustomFilterCallbacks, CustomFilterProps, useGridFilter} from "ag-grid-react";
+import {CustomFilterProps, useGridFilter} from "ag-grid-react";
+import {DoesFilterPassParams} from "ag-grid-community";
 // global vars
 import {useFilter} from "../Providers/ProviderFilter";
 // mui components
-import {Button, Checkbox, FormControlLabel, FormGroup} from "@mui/material";
+import {Checkbox, FormControlLabel, FormGroup} from "@mui/material";
 // styling
 import '../Filters/FilterCheckboxSet.css'
-import {DoesFilterPassParams} from "ag-grid-community";
 
-export default function FilterCheckboxSet ({model, onModelChange, getValue, colDef}: CustomFilterProps) {
+export default function FilterCheckboxSet ({onModelChange, colDef}: CustomFilterProps) {
 
     const { retrieveColSet } = useFilter();
-    const [set] = useState<string[] | null>(retrieveColSet(colDef?.field))
     const [map, setMap] = useState(new Map<string, boolean>());
 
     // initialize map
     useEffect(() => {
-        let tempMap = new Map<string, boolean>();
-        set?.forEach((v) => {
+        const tempMap = new Map<string, boolean>();
+        retrieveColSet(colDef?.field)?.forEach((v) => {
             tempMap.set(v, true)
         })
         setMap(tempMap);
     }, [])
 
-    const resetMap:() => void = useCallback(():void => {
-        setMap(prev => {
-            const newMap = new Map(map);
-            set?.forEach((v) => {
-                newMap.set(v, true)
-            })
-            return newMap;
-        })
-    }, [map, set])
+    const ifTrue = useCallback((key:string):boolean => {
+        return !!(map.get(key));
+    }, [map])
 
     const ifAllTrue = useMemo(():boolean => {
-        let state:boolean = true;
-        map.forEach((v) => {
-            if (!v) state = false;
+        let status = true;
+        map.forEach((v:boolean) => {
+            if (!v) status = false;
         })
-        return state;
+        return status;
     }, [map])
 
-    const ifEnabled = useCallback((e:any) => {
-        console.log(e);
-    }, [map])
-
-    const modifyMap = useCallback((key:string):void => {
-        //
+    const modifyKey = useCallback((key:string):void => {
         if(!map.has(key)) return;
-        //
         setMap(prev => {
             const newMap = new Map(prev);
             newMap.set(key, !newMap.get(key));
@@ -58,17 +45,29 @@ export default function FilterCheckboxSet ({model, onModelChange, getValue, colD
         })
     }, [map])
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>)=> {
+    const modifyAllKeys = useCallback((state: boolean):void => {
+        setMap(prev => {
+            const newMap = new Map(prev);
+            Array.from(newMap.keys()).forEach((key) => {
+                newMap.set(key, state);
+            })
+            return newMap;
+        })
+    }, [])
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if(e.target.id === "all")
-            resetMap();
+            e.target.checked ? modifyAllKeys(true) : modifyAllKeys(false);
         else
-            modifyMap(e.target.id);
-    }, [modifyMap, resetMap])
+            modifyKey(e.target.id);
+        onModelChange(e.target.id ? map : null);
+    }, [modifyAllKeys, modifyKey, onModelChange, map])
 
+    const doesFilterPass = useCallback(({data, node}:DoesFilterPassParams) => {
+        return ifTrue(data?.[colDef.field as string])
+    }, [colDef, ifTrue])
 
-    useEffect(() => {
-        console.log(map)
-    }, [map])
+    useGridFilter({doesFilterPass});
 
     return (
         <div className="FormContainer">
@@ -84,22 +83,20 @@ export default function FilterCheckboxSet ({model, onModelChange, getValue, colD
                     }
                     label="All"
                 />
-                {set && set.map((att:string) => (
+                {map.size >= 1 && (Array.from(map.keys())).map((att:string) => (
                     <FormControlLabel
                         control={
                             <Checkbox
                                 id={att}
                                 size="small"
                                 onChange={handleChange}
+                                checked={ifTrue(att)}
                             />
                         }
                         label={att}
                     />
                 ))}
             </FormGroup>
-                <Button className="ButtonSpacing"
-                 variant="outlined"
-                >Reset</Button>
         </div>
     )
 }
