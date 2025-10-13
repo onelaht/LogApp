@@ -7,13 +7,15 @@ import {Button, styled} from "@mui/material";
 
 export default function LogToolbar() {
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
-    const { gridRef, setGridData } = useGrid();
+    const { setGridData } = useGrid();
 
+    // read in and save user data
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
         // read file
         const reader = new FileReader();
         reader.onload = () => {
+            // save data
             setRawString(reader.result);
         }
         reader.readAsBinaryString(data);

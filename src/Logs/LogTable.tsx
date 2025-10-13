@@ -8,7 +8,7 @@ import { themeAlpine } from "ag-grid-community";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
 import { useFilter } from "../Providers/ProviderFilter";
-//
+// types
 import { Row } from "../Types/types";
 // custom filter
 import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
@@ -253,7 +253,7 @@ export default function LogTable() {
             .catch(error => {
                 console.error("Error during fetch:", error);
             });
-    }, [gridData, setRowData])
+    }, [gridData, setUniqueAccount, setUniqueSymbol])
 
     // if user uploads a file, call toBackend (send data to backend)
     useEffect(() => {
