@@ -1,7 +1,7 @@
 // react
 import React, {createContext, ReactNode, useContext, useRef, useState} from 'react';
 // types
-import type { Row } from "../Types/types"
+import type { Row } from "../Types/Row"
 // ag grid
 import {AgGridReact} from "ag-grid-react";
 

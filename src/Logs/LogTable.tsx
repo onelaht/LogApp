@@ -9,7 +9,7 @@ import { themeAlpine } from "ag-grid-community";
 import { useGrid } from "../Providers/ProviderGrid";
 import { useFilter } from "../Providers/ProviderFilter";
 // types
-import { Row } from "../Types/types";
+import { Row } from "../Types/Row";
 // custom filter
 import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
 
