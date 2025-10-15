@@ -12,6 +12,7 @@ import { useFilter } from "../Providers/ProviderFilter";
 import { Row } from "../Types/Row";
 // custom filter
 import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
+import FilterDuration from "../Filters/FilterDuration";
 
 export default function LogTable() {
     // global vars
@@ -42,9 +43,7 @@ export default function LogTable() {
         {
             field: "Duration",
             cellDataType: "text",
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
+            filter: FilterDuration,
         },
         {
             field: "Symbol",
