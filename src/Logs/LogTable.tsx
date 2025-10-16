@@ -42,8 +42,9 @@ export default function LogTable() {
         },
         {
             field: "Duration",
-            cellDataType: "text",
+            cellDataType: "number",
             filter: FilterDuration,
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Duration"])}
         },
         {
             field: "Symbol",
