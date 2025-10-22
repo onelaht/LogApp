@@ -1,13 +1,8 @@
-interface ITimeFormat {
-    hour: string | null;
-    min: string | null;
-    sec: string | null;
-}
+import {ITimeFormat} from "./ITimeFormat";
 
 interface TimeFilter {
     userInput: ITimeFormat;
     filter: string;
-    intValue: number | null;
 }
 
 export interface ITimeFilterArgs {
