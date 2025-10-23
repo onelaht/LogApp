@@ -1,11 +1,6 @@
-import {ITimeFormat} from "./ITimeFormat";
-
-interface TimeFilter {
-    userInput: ITimeFormat;
-    filter: string;
-}
+import {ITimeFilter} from "./ITimeFilter";
 
 export interface ITimeFilterArgs {
-    first: TimeFilter;
-    second: TimeFilter;
+    first: ITimeFilter;
+    second: ITimeFilter;
 }
