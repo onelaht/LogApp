@@ -1,5 +1,5 @@
 // react
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useRef, useMemo, useState} from 'react';
 // ag grid
 import {CustomFilterProps, useGridFilter} from "ag-grid-react";
 import {DoesFilterPassParams} from "ag-grid-community";
@@ -15,12 +15,16 @@ import {
     TextField,
     Typography
 } from '@mui/material';
+// comparison (lodash)
+import { isEqual } from 'lodash';
 // types
-import {ITimeFilterArgs} from "../Types/ITimeFilterArgs";
-import {ITimeFormat} from "../Types/ITimeFormat";
+import { ITimeFilterArgs } from "../Types/ITimeFilterArgs";
+import { ITimeFormat } from "../Types/ITimeFormat";
+import { ITimeFilter } from "../Types/ITimeFilter";
 
 export default function FilterDuration ({onModelChange, colDef}: CustomFilterProps) {
-    const [args, setArgs] = useState<ITimeFilterArgs>({
+    // object used for filter adjustment
+    const [draft, setDraft] = useState<ITimeFilterArgs>({
         first: {
             userInput: {
                 hour: "",
@@ -36,31 +40,68 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                 sec: "",
             },
             filter: "",
+
         }
     })
 
-    const [radio, setRadio] = useState<string>("AND");
+    // object used for applying filter
+    const [applied, setApplied] = useState<ITimeFilterArgs>({
+        first: {
+            userInput: {
+                hour: "",
+                min: "",
+                sec: "",
+            },
+            filter: "",
+        },
+        second: {
+            userInput: {
+                hour: "",
+                min: "",
+                sec: "",
+            },
+            filter: "",
 
+        }
+    })
+
+    // references prev draft obj
+    const prevArgsRef = useRef<ITimeFilterArgs|null>(null);
+
+    // filter types for each argument
     const filters:string[] = useMemo(() =>
         ["Greater than", "Less than", "Equal to", "Greater than or equal to", "Less than or equal to"], [])
 
-    const convertToSec = useCallback((val:ITimeFormat) => {
-        const hour = val.hour !== "" ? parseInt(val.hour) * 3600 : 0;
-        const min = val.min !== "" ? parseInt(val.min) * 60 : 0;
-        const sec = val.min !== "" ? parseInt(val.min) : 0;
+    // conditionals used when a second argument is used
+    const [radio, setRadio] = useState<string>("AND");
+
+    // converts string time to int seconds
+    // - converts empty vals ("") to 0
+    const convertToSec = useCallback((time:ITimeFormat) => {
+        const hour = time.hour !== "" ? parseInt(time.hour) * 3600 : 0;
+        const min = time.min !== "" ? parseInt(time.min) * 60 : 0;
+        const sec = time.min !== "" ? parseInt(time.min) : 0;
         return hour + min + sec;
     }, [])
 
-    const doesContainInput = useCallback((val:ITimeFormat) => {
-        return val.hour !== "" || val.min !== "" || val.sec !== "";
+    // determines if each argument contains a filter and time
+    // - returns true if it contains valid filter and time
+    // - returns false otherwise
+    const doesContainInput = useCallback((arg:ITimeFilter) => {
+        return (arg.filter !== "") && (arg.userInput.hour !== "" || arg.userInput.min !== "" || arg.userInput.sec !== "");
     }, [])
 
+    // converts single digit values into two
+    // - "2" will be converted to "02"
     const valueFormatter = useCallback((data:string) => {
         if(!data || data?.length > 2)
             return data
         return data?.padStart(2, "0");
     }, [])
 
+    // evaluates node and input value based on the chosen filter type
+    // - returns true of it satisfies assigned filter
+    // - returns false if it doesn't satisfy filter or if filter type is unknown
     const evaluate = useCallback((node:number, value:number, filter:string) => {
         if(!value) return false;
         switch(filter) {
@@ -74,37 +115,51 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
         }
     }, [])
 
-    const handleOptionChange = useCallback((e:SelectChangeEvent) => {
+    // reassigns filter type for argument
+    const handleFilterChange = useCallback((e:SelectChangeEvent) => {
         const argType = e.target.name as keyof ITimeFilterArgs
-        setArgs(prev => ({
+        setDraft(prev => ({
             ...prev, [argType]: {
                 ...prev[argType], filter: e.target.value
             }
         }))
     }, [])
 
+    // invokes useGridData() and overwrites applied object
+    // - returns with no changes if no change is found last previous args
     const handleApplyButton = useCallback(() => {
-        onModelChange(args ? args : null)
-    }, [onModelChange, args])
+        // if equal from prev state, leave
+        if(isEqual(prevArgsRef, draft))
+            return;
+        // alert AG Grid for filter change
+        onModelChange(draft);
+        // assign new applied data
+        setApplied(draft);
+        // update prev state
+        prevArgsRef.current = draft;
+    }, [onModelChange, draft, prevArgsRef])
 
+    // determines which row to hide
     const doesFilterPass = useCallback(({data}:DoesFilterPassParams) => {
+        // retrieve current col cell
         const node = parseInt(data[colDef?.field as string]);
-        const firstArg = (args.first.filter !== "" && doesContainInput(args.first.userInput)) ?
-            convertToSec(args.first.userInput) : -1;
-        const secondArg = (args.second.filter !== "" && doesContainInput(args.second.userInput)) ?
-            convertToSec(args.second.userInput) : -1;
+        // retrieve user args and convert to int sec
+        // assign -1 if empty
+        const firstArg =  doesContainInput(applied.first) ? convertToSec(applied.first.userInput) : -1;
+        const secondArg = doesContainInput(applied.second) ? convertToSec(applied.second.userInput) : -1;
+        // if both are empty, (no filters set) show all values
         if(firstArg === -1 && secondArg === -1)
-            return false;
+            return true;
+        // if only one arg contains valid int, evaluate w/o conditional
         if(secondArg === -1)
-            return evaluate(node, firstArg, args.first.filter);
+            return evaluate(node, firstArg, applied.first.filter);
+        // evaluate two args with AND
         if(radio === "AND")
-        {
-            console.log("here")
-            return evaluate(node, firstArg, args.first.filter) && evaluate(node, secondArg, args.second.filter);
-        }
+            return evaluate(node, firstArg, applied.first.filter) && evaluate(node, secondArg, applied.second.filter);
+        // evaluate two args with OR
         else
-            return evaluate(node, firstArg, args.first.filter) || evaluate(node, secondArg, args.second.filter);
-    }, [colDef, args, doesContainInput, convertToSec, evaluate, radio])
+            return evaluate(node, firstArg, applied.first.filter) || evaluate(node, secondArg, applied.second.filter);
+    }, [applied.first, applied.second, colDef?.field, convertToSec, doesContainInput, evaluate, radio])
 
     useGridFilter({doesFilterPass});
 
@@ -119,8 +174,8 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                     sx={{marginBottom: "0.5rem"}}>
                     <Select<string>
                         name="first"
-                        value={args.first.filter}
-                        onChange={handleOptionChange}
+                        value={draft.first.filter}
+                        onChange={handleFilterChange}
                     >
                         {filters.map((i:string) => {return <MenuItem value={i}>{i}</MenuItem>})}
                     </Select>
@@ -128,15 +183,15 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                 <Stack direction="row" spacing={0} sx={{alignItems: "center"}}>
                     <TextField
                         id="hour"
-                        value={args.first.userInput.hour}
-                        onChange={e => setArgs(prev => {
+                        value={draft.first.userInput.hour}
+                        onChange={e => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
                                         {...prev.first.userInput, hour: e.target.value}
                                 }}
                         })}
-                        onBlur={() => setArgs(prev => {
+                        onBlur={() => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
-                                        {...prev.first.userInput, hour: valueFormatter(args.first.userInput.hour)}
+                                        {...prev.first.userInput, hour: valueFormatter(draft.first.userInput.hour)}
                                 }}
                         })}
                         slotProps={{
@@ -148,19 +203,19 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         }}
                         size="small"
                         placeholder="HH"
-                        disabled={args.first.filter === ""}
+                        disabled={draft.first.filter === ""}
                     />
                     <Typography>:</Typography>
                     <TextField
-                        value={args.first.userInput.min}
-                        onChange={e => setArgs(prev => {
+                        value={draft.first.userInput.min}
+                        onChange={e => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
                                         {...prev.first.userInput, min: e.target.value}
                             }}
                         })}
-                        onBlur={() => setArgs(prev => {
+                        onBlur={() => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
-                                        {...prev.first.userInput, min: valueFormatter(args.first.userInput.min)}
+                                        {...prev.first.userInput, min: valueFormatter(draft.first.userInput.min)}
                             }}
                         })}
                         slotProps={{
@@ -172,19 +227,19 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         }}
                         size="small"
                         placeholder="MM"
-                        disabled={args.first.filter === ""}
+                        disabled={draft.first.filter === ""}
                     />
                     <Typography>:</Typography>
                     <TextField
-                        value={args.first.userInput.sec}
-                        onChange={e => setArgs(prev => {
+                        value={draft.first.userInput.sec}
+                        onChange={e => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
                                         {...prev.first.userInput, sec: e.target.value}
                                 }}
                         })}
-                        onBlur={() => setArgs(prev => {
+                        onBlur={() => setDraft(prev => {
                             return {...prev, first: {...prev.first, userInput:
-                                        {...prev.first.userInput, sec: valueFormatter(args.first.userInput.sec)}
+                                        {...prev.first.userInput, sec: valueFormatter(draft.first.userInput.sec)}
                                 }}
                         })}
                         slotProps={{
@@ -196,10 +251,10 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         }}
                         size="small"
                         placeholder="SS"
-                        disabled={args.first.filter === ""}
+                        disabled={draft.first.filter === ""}
                     />
                 </Stack>
-                {(args.first.userInput?.min || args.first.userInput?.hour || args.first.userInput?.sec) && (
+                {(draft.first.userInput?.min || draft.first.userInput?.hour || draft.first.userInput?.sec) && (
                     <>
                         <FormControl sx={{alignSelf: "center"}}>
                             <RadioGroup
@@ -218,8 +273,8 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                             sx={{marginBottom: "0.5rem"}}>
                             <Select<string>
                                 name="second"
-                                value={args.second.filter}
-                                onChange={handleOptionChange}
+                                value={draft.second.filter}
+                                onChange={handleFilterChange}
                             >
                                 {filters.map((i:string) => {return <MenuItem value={i}>{i}</MenuItem>})}
                             </Select>
@@ -227,15 +282,15 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         <Stack direction="row" spacing={0} sx={{alignItems: "center"}}>
                             <TextField
                                 id="hour"
-                                value={args.second.userInput.hour}
-                                onChange={e => setArgs(prev => {
+                                value={draft.second.userInput.hour}
+                                onChange={e => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
                                                 {...prev.second.userInput, hour: e.target.value}
                                         }}
                                 })}
-                                onBlur={() => setArgs(prev => {
+                                onBlur={() => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
-                                                {...prev.second.userInput, hour: valueFormatter(args.second.userInput.hour)}
+                                                {...prev.second.userInput, hour: valueFormatter(draft.second.userInput.hour)}
                                         }}
                                 })}
                                 slotProps={{
@@ -247,19 +302,19 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                 }}
                                 size="small"
                                 placeholder="HH"
-                                disabled={args.second.filter === ""}
+                                disabled={draft.second.filter === ""}
                             />
                             <Typography>:</Typography>
                             <TextField
-                                value={args.second.userInput.min}
-                                onChange={e => setArgs(prev => {
+                                value={draft.second.userInput.min}
+                                onChange={e => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
                                                 {...prev.second.userInput, min: e.target.value}
                                         }}
                                 })}
-                                onBlur={() => setArgs(prev => {
+                                onBlur={() => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
-                                                {...prev.second.userInput, min: valueFormatter(args.second.userInput.min)}
+                                                {...prev.second.userInput, min: valueFormatter(draft.second.userInput.min)}
                                         }}
                                 })}
                                 slotProps={{
@@ -271,19 +326,19 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                 }}
                                 size="small"
                                 placeholder="MM"
-                                disabled={args.second.filter === ""}
+                                disabled={draft.second.filter === ""}
                             />
                             <Typography>:</Typography>
                             <TextField
-                                value={args.second.userInput.sec}
-                                onChange={e => setArgs(prev => {
+                                value={draft.second.userInput.sec}
+                                onChange={e => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
                                                 {...prev.second.userInput, sec: e.target.value}
                                         }}
                                 })}
-                                onBlur={() => setArgs(prev => {
+                                onBlur={() => setDraft(prev => {
                                     return {...prev, second: {...prev.second, userInput:
-                                                {...prev.second.userInput, sec: valueFormatter(args.second.userInput.sec)}
+                                                {...prev.second.userInput, sec: valueFormatter(draft.second.userInput.sec)}
                                         }}
                                 })}
                                 slotProps={{
@@ -295,7 +350,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                 }}
                                 size="small"
                                 placeholder="SS"
-                                disabled={args.second.filter === ""}
+                                disabled={draft.second.filter === ""}
                             />
                         </Stack>
                     </>
