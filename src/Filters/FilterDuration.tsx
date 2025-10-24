@@ -142,6 +142,33 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
         prevArgsRef.current = draft;
     }, [onModelChange, draft, prevArgsRef])
 
+    // reverts filter to initial state
+    const handleResetButton = useCallback(() => {
+        // clear applied data
+        setApplied({
+            first: {
+                userInput: {
+                    hour: "",
+                    min: "",
+                    sec: "",
+                },
+                filter: "",
+            },
+            second: {
+                userInput: {
+                    hour: "",
+                    min: "",
+                    sec: "",
+                },
+                filter: "",
+
+            }
+        })
+        // clear model and prev reference
+        onModelChange(null);
+        prevArgsRef.current = null;
+    }, [onModelChange])
+
     // determines which row to hide
     const doesFilterPass = useCallback(({data}:DoesFilterPassParams) => {
         // retrieve current col cell
@@ -328,7 +355,9 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         onClick={handleApplyButton}>
                         Apply
                     </Button>
-                    <Button variant="outlined">
+                    <Button
+                        variant="outlined"
+                        onClick={handleResetButton}>
                         Reset
                     </Button>
                 </Stack>
