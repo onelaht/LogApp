@@ -21,7 +21,8 @@ import { isEqual } from 'lodash';
 import { ITimeFilterArgs } from "../Types/ITimeFilterArgs";
 import { ITimeFormat } from "../Types/ITimeFormat";
 import { ITimeFilter } from "../Types/ITimeFilter";
-//
+// styling
+import "./FilterDuration.css"
 import { FilterDurationMUI } from "./FilterDurationMUI";
 
 export default function FilterDuration ({onModelChange, colDef}: CustomFilterProps) {
