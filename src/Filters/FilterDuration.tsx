@@ -21,6 +21,8 @@ import { isEqual } from 'lodash';
 import { ITimeFilterArgs } from "../Types/ITimeFilterArgs";
 import { ITimeFormat } from "../Types/ITimeFormat";
 import { ITimeFilter } from "../Types/ITimeFilter";
+//
+import { FilterDurationMUI } from "./FilterDurationMUI";
 
 export default function FilterDuration ({onModelChange, colDef}: CustomFilterProps) {
     // object used for filter adjustment
@@ -165,13 +167,13 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
 
     return (
         <>
-            <div style={{display: "flex", flexDirection: "column", transform: "scale(0.85)"}}>
+            <div className="FilterContainer">
                 <FormControl
                     fullWidth
                     size="small"
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
-                    sx={{marginBottom: "0.5rem"}}>
+                    sx={FilterDurationMUI.FormArgsSx}>
                     <Select<string>
                         name="first"
                         value={draft.first.filter}
@@ -180,7 +182,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         {filters.map((i:string) => {return <MenuItem value={i}>{i}</MenuItem>})}
                     </Select>
                 </FormControl>
-                <Stack direction="row" spacing={0} sx={{alignItems: "center"}}>
+                <Stack direction="row" spacing={0} sx={FilterDurationMUI.StackSx}>
                     <TextField
                         id="hour"
                         value={draft.first.userInput.hour}
@@ -194,13 +196,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                         {...prev.first.userInput, hour: valueFormatter(draft.first.userInput.hour)}
                                 }}
                         })}
-                        slotProps={{
-                            htmlInput: {
-                                maxLength: 2,
-                                inputMode: 'string',
-                                style: { textAlign: 'center', width: '2.5em' }
-                            },
-                        }}
+                        slotProps={FilterDurationMUI.TimeSlotProp}
                         size="small"
                         placeholder="HH"
                         disabled={draft.first.filter === ""}
@@ -218,13 +214,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                         {...prev.first.userInput, min: valueFormatter(draft.first.userInput.min)}
                             }}
                         })}
-                        slotProps={{
-                            htmlInput: {
-                                maxLength: 2,
-                                inputMode: 'numeric',
-                                style: { textAlign: 'center', width: '2.5em' }
-                            },
-                        }}
+                        slotProps={FilterDurationMUI.TimeSlotProp}
                         size="small"
                         placeholder="MM"
                         disabled={draft.first.filter === ""}
@@ -242,13 +232,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                         {...prev.first.userInput, sec: valueFormatter(draft.first.userInput.sec)}
                                 }}
                         })}
-                        slotProps={{
-                            htmlInput: {
-                                maxLength: 2,
-                                inputMode: 'numeric',
-                                style: { textAlign: 'center', width: '2.5em' }
-                            },
-                        }}
+                        slotProps={FilterDurationMUI.TimeSlotProp}
                         size="small"
                         placeholder="SS"
                         disabled={draft.first.filter === ""}
@@ -256,7 +240,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                 </Stack>
                 {(draft.first.userInput?.min || draft.first.userInput?.hour || draft.first.userInput?.sec) && (
                     <>
-                        <FormControl sx={{alignSelf: "center"}}>
+                        <FormControl sx={FilterDurationMUI.FormSx}>
                             <RadioGroup
                                 row
                                 value={radio}
@@ -270,7 +254,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                             size="small"
                             onMouseDown={(e) => e.stopPropagation()}
                             onClick={(e) => e.stopPropagation()}
-                            sx={{marginBottom: "0.5rem"}}>
+                            sx={FilterDurationMUI.FormArgsSx}>
                             <Select<string>
                                 name="second"
                                 value={draft.second.filter}
@@ -279,7 +263,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                 {filters.map((i:string) => {return <MenuItem value={i}>{i}</MenuItem>})}
                             </Select>
                         </FormControl>
-                        <Stack direction="row" spacing={0} sx={{alignItems: "center"}}>
+                        <Stack direction="row" spacing={0} sx={FilterDurationMUI.StackSx}>
                             <TextField
                                 id="hour"
                                 value={draft.second.userInput.hour}
@@ -293,13 +277,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                                 {...prev.second.userInput, hour: valueFormatter(draft.second.userInput.hour)}
                                         }}
                                 })}
-                                slotProps={{
-                                    htmlInput: {
-                                        maxLength: 2,
-                                        inputMode: 'string',
-                                        style: { textAlign: 'center', width: '2.5em' }
-                                    },
-                                }}
+                                slotProps={FilterDurationMUI.TimeSlotProp}
                                 size="small"
                                 placeholder="HH"
                                 disabled={draft.second.filter === ""}
@@ -317,13 +295,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                                 {...prev.second.userInput, min: valueFormatter(draft.second.userInput.min)}
                                         }}
                                 })}
-                                slotProps={{
-                                    htmlInput: {
-                                        maxLength: 2,
-                                        inputMode: 'numeric',
-                                        style: { textAlign: 'center', width: '2.5em' }
-                                    },
-                                }}
+                                slotProps={FilterDurationMUI.TimeSlotProp}
                                 size="small"
                                 placeholder="MM"
                                 disabled={draft.second.filter === ""}
@@ -341,13 +313,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                                                 {...prev.second.userInput, sec: valueFormatter(draft.second.userInput.sec)}
                                         }}
                                 })}
-                                slotProps={{
-                                    htmlInput: {
-                                        maxLength: 2,
-                                        inputMode: 'numeric',
-                                        style: { textAlign: 'center', width: '2.5em' }
-                                    },
-                                }}
+                                slotProps={FilterDurationMUI.TimeSlotProp}
                                 size="small"
                                 placeholder="SS"
                                 disabled={draft.second.filter === ""}
@@ -355,7 +321,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
                         </Stack>
                     </>
                 )}
-                <Stack direction="row" gap={1} sx={{alignSelf: "flex-end", marginTop: "1rem"}}>
+                <Stack direction="row" gap={1} sx={FilterDurationMUI.StackButtonSx}>
                     <Button
                         variant="outlined"
                         onClick={handleApplyButton}>
