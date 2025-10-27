@@ -83,7 +83,7 @@ export default function FilterDuration ({onModelChange, colDef}: CustomFilterPro
     const convertToSec = useCallback((time:ITimeFormat) => {
         const hour = time.hour !== "" ? parseInt(time.hour) * 3600 : 0;
         const min = time.min !== "" ? parseInt(time.min) * 60 : 0;
-        const sec = time.min !== "" ? parseInt(time.min) : 0;
+        const sec = time.sec !== "" ? parseInt(time.sec) : 0;
         return hour + min + sec;
     }, [])
 
