@@ -1,5 +1,5 @@
 export enum FilterList {
-    NONE = "None",
+    NONE = "No filters set",
     GREATER_THAN = "Greater Than",
     LESS_THAN = "Less Than",
     EQUAL = "Equal to",
