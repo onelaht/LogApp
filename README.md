@@ -1,34 +1,32 @@
-# logging application for sierra chart
+# Sierra Chart Tagging and Logging
 
-## Getting started
+## Prerequisites  
 
-### `npm install`
+Configure Go: 
+`https://go.dev/doc/install`  
+
+Configure NodeJS (npm):
+`https://nodejs.org/en/download/current`  
+
+## Running client and server  
+
+### `git clone https://github.com/onelaht/LogApp.git`  
+Download project repo  
+
+### `cd LogApp && npm install`  
 Install NPM dependencies  
 
-### `cd gin-server && go run server.go`  
-Run backend server.
+### `cd gin-server && go mod tidy && cd ..`  
+Install Go dependencies  
+
+### `npm run server`  
+Run backend server.  
 
 ### `npm start`
-Run frontend/client.  
+Run frontend/client (in a separate terminal)  
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-## Screenshots (feature branch implementations)  
+## Addition Information  
 
-All unchecked  
-![2025-10-13-12-04-36-sc.jpg](src/Screenshots/2025-10-13-12-04-36-sc.jpg)  
-<br>  
-<br>  
-All checked  
-![2025-10-13-12-04-42-sc.jpg](src/Screenshots/2025-10-13-12-04-42-sc.jpg)   
-<br>  
-<br>  
-One set checked  
-![2025-10-13-12-04-51-sc.jpg](src/Screenshots/2025-10-13-12-04-51-sc.jpg)  
-<br>  
-<br>  
-Two sets checked  
-![2025-10-13-12-05-01-sc.jpg](src/Screenshots/2025-10-13-12-05-01-sc.jpg)  
-<br>  
-<br>  
-Two columns utilizing filter set (Symbol: checked 2 sets, Type: Short)  
-![2025-10-13-12-05-12-sc.jpg](src/Screenshots/2025-10-13-12-05-12-sc.jpg)  
+### `/sample-data`  
+Contains a Sierra Chart Log; used for upload testing
