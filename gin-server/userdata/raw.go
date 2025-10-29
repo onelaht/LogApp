@@ -1,6 +1,7 @@
 package userdata
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -98,6 +99,13 @@ func adjustFormatting(colType string, colValue string) string {
 	switch colType {
 	case "Account\r":
 		return strings.TrimRight(colValue, "\r")
+	case "Duration":
+		intArr := make([]int, 0)
+		for _, str := range strings.Split(colValue, ":") {
+			converted, _ := strconv.Atoi(str)
+			intArr = append(intArr, converted)
+		}
+		return strconv.Itoa(intArr[0]*3600 + intArr[1]*60 + intArr[2])
 	case "Symbol":
 		before, _, found := strings.Cut(colValue, " ")
 		if found {

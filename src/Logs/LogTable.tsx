@@ -12,11 +12,21 @@ import { useFilter } from "../Providers/ProviderFilter";
 import { Row } from "../Types/Row";
 // custom filter
 import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
+import FilterDuration from "../Filters/FilterDuration";
 
 export default function LogTable() {
     // global vars
     const { gridRef, gridData } = useGrid();
     const { setUniqueAccount, setUniqueSymbol } = useFilter();
+
+    const convertDuration = useCallback((seconds:number) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        return [h, m, s]
+            .map(v => String(v).padStart(2, "0"))
+            .join(":");
+    }, [])
 
     // definitions of grid columns
     // - specifies data type used
@@ -41,10 +51,10 @@ export default function LogTable() {
         },
         {
             field: "Duration",
-            cellDataType: "text",
-            filterParams: {
-                buttons: ["apply", "reset"],
-            },
+            cellDataType: "number",
+            filter: FilterDuration,
+            valueGetter: (p:ValueGetterParams) => {return parseInt(p.data?.["Duration"])},
+            valueFormatter: (p:ValueFormatterParams) => {return convertDuration(p.value)}
         },
         {
             field: "Symbol",
@@ -227,7 +237,7 @@ export default function LogTable() {
             field: "Note",
             cellDataType: "text",
         },
-    ], [])
+    ], [convertDuration])
 
     // store row/tuple data
     const [rowData, setRowData] = useState<Row[] | null>(null);
