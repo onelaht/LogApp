@@ -1,34 +1,32 @@
-# logging application for sierra chart
+# Sierra Chart Tagging and Logging
 
-## Getting started
+## Prerequisites  
 
-### `npm install`
-Install NPM dependencies  
+### 1. Configure Go 
+- `https://go.dev/doc/install`  
 
-### `cd gin-server && go run server.go`  
-Run backend server.
+### 2. Configure NodeJS (npm)  
+- `https://nodejs.org/en/download/current`  
 
-### `npm start`
-Run frontend/client.  
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Running client and server  
 
-## Screenshots (feature branch implementations)  
+### 1. Download project repo  
+- `git clone https://github.com/onelaht/LogApp.git`   
 
-All unchecked  
-![2025-10-13-12-04-36-sc.jpg](src/Screenshots/2025-10-13-12-04-36-sc.jpg)  
-<br>  
-<br>  
-All checked  
-![2025-10-13-12-04-42-sc.jpg](src/Screenshots/2025-10-13-12-04-42-sc.jpg)   
-<br>  
-<br>  
-One set checked  
-![2025-10-13-12-04-51-sc.jpg](src/Screenshots/2025-10-13-12-04-51-sc.jpg)  
-<br>  
-<br>  
-Two sets checked  
-![2025-10-13-12-05-01-sc.jpg](src/Screenshots/2025-10-13-12-05-01-sc.jpg)  
-<br>  
-<br>  
-Two columns utilizing filter set (Symbol: checked 2 sets, Type: Short)  
-![2025-10-13-12-05-12-sc.jpg](src/Screenshots/2025-10-13-12-05-12-sc.jpg)  
+### 2. Install NPM dependencies  
+- `cd LogApp && npm install`  
+
+### 3. Install Go dependencies  
+- `cd gin-server && go mod tidy && cd ..`  
+
+### 4. Run backend server.  
+- `npm run server`  
+
+### 5. Run frontend/client (in a separate terminal)  
+- `npm start` 
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.  
+
+## Addition Information  
+
+### `/sample-data`  
+- Contains a Sierra Chart Log; used for upload testing
