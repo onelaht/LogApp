@@ -1,14 +1,31 @@
 // react
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
 // mui components
-import {Button, styled} from "@mui/material";
+import {Box, Button, Checkbox, FormControlLabel, FormGroup, InputLabel, ListItemText, MenuItem, Modal, Select, Stack, styled, Typography} from "@mui/material";
 
 export default function LogToolbar() {
+    // global vars
+    const {setGridData, gridRef, colFields} = useGrid();
+    // store user dataafalse
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
-    const { setGridData } = useGrid();
+    // selected cols
+    const [selectedCols, setSelectedCols] = useState<string[]>([]);
+    // MUI related
+    const [colModalState, setColModalState] = useState<boolean>(false);
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '50%',
+        height: '25%',
+        bgcolor: 'background.paper',
+        border: '2px solid #808080',
+        p: 4,
+    };
     // read in and save user data
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
@@ -45,7 +62,7 @@ export default function LogToolbar() {
     });
 
     return (
-        <>
+        <Stack direction="row" gap={1}>
             <Button
                 style={{color: "black", borderColor: "black"}}
                 component="label"
@@ -59,6 +76,25 @@ export default function LogToolbar() {
                     accept="csv"
                 />
             </Button>
-        </>
+            <Button
+                style={{color: "black", borderColor: "black"}}
+                component="label"
+                variant="outlined"
+                size="small"
+                onClick={() => setColModalState(true)}
+            >
+                Manage SC Columns
+            </Button>
+            <Modal
+                hideBackdrop
+                open={colModalState}
+                onClose={() => setColModalState(false)}
+                sx={style}
+                >
+                    <div style={{display: "flex"}}>
+                        <Button sx={{alignItems: "flex-end", justifyContent: "flex-end"}}>Close</Button>
+                    </div>
+            </Modal>
+        </Stack>
     )
 }
