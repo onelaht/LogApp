@@ -1,9 +1,10 @@
 // react
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
 // mui components
-import {Box, Button, Checkbox, FormControlLabel, FormGroup, InputLabel, ListItemText, MenuItem, Modal, Select, Stack, styled, Typography} from "@mui/material";
+import {Button, Checkbox,
+    FormControl, ListItem, ListItemText, MenuItem, Select, Stack, styled} from "@mui/material";
 
 export default function LogToolbar() {
     // global vars
@@ -11,21 +12,31 @@ export default function LogToolbar() {
     // store user dataafalse
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
     // selected cols
-    const [selectedCols, setSelectedCols] = useState<string[]>([]);
-    // MUI related
-    const [colModalState, setColModalState] = useState<boolean>(false);
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '50%',
-        height: '25%',
-        bgcolor: 'background.paper',
-        border: '2px solid #808080',
-        p: 4,
+    const [colMap, setColMap] = useState(new Map<string, boolean>());
+    // MUI: Styling
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
     };
+    // MUI; hidden file upload form
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
+
     // read in and save user data
     const readInFile = useCallback((data:File | null) => {
         if(!data || !data?.type.startsWith("text/plain")) return;
@@ -48,18 +59,39 @@ export default function LogToolbar() {
         }
     }, [rawString, setGridData])
 
-    // from MUI docs; hidden file upload form
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
+    const getVisibleColumns = useMemo(() => {
+        return Object.keys(colMap).filter((f) => colMap.get(f))
+    }, [colMap])
+
+    // initialize checkbox status
+    // - <future imm> if retrieved from db, restore based on config
+    // - otherwise, set all columns as visible
+    useEffect(() => {
+        const tempMap = new Map<string, boolean>();
+        // set all as visible
+        colFields.forEach((f) => {
+            tempMap.set(f, true);
+        })
+        // use as column map
+        setColMap(tempMap);
+    }, [])
+
+    const colVisibility = useCallback((arr:string, value:boolean) => {
+        if(!gridRef.current) return
+        gridRef?.current?.api?.setColumnsVisible([arr], value);
+    }, [gridRef.current])
+
+    const handleCheckbox = useCallback((field: string) => {
+        // if not found return
+        if(!colMap.has(field)) return;
+        // update field status and map
+        setColMap(prev => {
+            const tempMap = new Map(prev);
+            tempMap.set(field, !tempMap.get(field));
+            colVisibility(field, !!tempMap.get(field));
+            return tempMap;
+        })
+    }, [colMap, colVisibility])
 
     return (
         <Stack direction="row" gap={1}>
@@ -76,25 +108,24 @@ export default function LogToolbar() {
                     accept="csv"
                 />
             </Button>
-            <Button
-                style={{color: "black", borderColor: "black"}}
-                component="label"
-                variant="outlined"
-                size="small"
-                onClick={() => setColModalState(true)}
-            >
-                Manage SC Columns
-            </Button>
-            <Modal
-                hideBackdrop
-                open={colModalState}
-                onClose={() => setColModalState(false)}
-                sx={style}
-                >
-                    <div style={{display: "flex"}}>
-                        <Button sx={{alignItems: "flex-end", justifyContent: "flex-end"}}>Close</Button>
-                    </div>
-            </Modal>
+            <FormControl >
+                <Select
+                    multiple
+                    sx={{height: "2rem", width: "5rem"}}
+                    value={getVisibleColumns}
+                    renderValue={(selected) => selected?.length}
+                    MenuProps={MenuProps}>
+                    {colFields.map((field) => (
+                        <MenuItem key={field} value={field}>
+                            <Checkbox
+                                onChange={() => handleCheckbox(field)}
+                                checked={colMap.get(field)}/>
+                            <ListItemText
+                                primary={field}/>
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
         </Stack>
     )
 }
