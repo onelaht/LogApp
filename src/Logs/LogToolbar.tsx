@@ -3,8 +3,8 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
 // mui components
-import {Button, Checkbox,
-    FormControl, ListItem, ListItemText, MenuItem, Select, Stack, styled} from "@mui/material";
+import {Box, Button, Checkbox,
+    FormControl, ListItem, ListItemText, MenuItem, Modal, Select, Stack, styled, Typography} from "@mui/material";
 
 export default function LogToolbar() {
     // global vars
@@ -13,6 +13,8 @@ export default function LogToolbar() {
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
     // selected cols
     const [colMap, setColMap] = useState(new Map<string, boolean>());
+    // modal handler
+    const [handleModal, setHandleModal] = useState<boolean>(false);
     // MUI: Styling
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -20,7 +22,7 @@ export default function LogToolbar() {
         PaperProps: {
             style: {
                 maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-                width: 250,
+                width: "15rem",
             },
         },
     };
@@ -36,6 +38,21 @@ export default function LogToolbar() {
         whiteSpace: 'nowrap',
         width: 1,
     });
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: "fit-content",
+        height: "80vh",
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        overflowY: "scroll",
+        boxShadow: 24,
+        display: "flex",
+        flexDirection: "column",
+        p: 4,
+    };
 
     // read in and save user data
     const readInFile = useCallback((data:File | null) => {
@@ -108,24 +125,34 @@ export default function LogToolbar() {
                     accept="csv"
                 />
             </Button>
-            <FormControl >
-                <Select
-                    multiple
-                    sx={{height: "2rem", width: "5rem"}}
-                    value={getVisibleColumns}
-                    renderValue={(selected) => selected?.length}
-                    MenuProps={MenuProps}>
-                    {colFields.map((field) => (
-                        <MenuItem key={field} value={field}>
-                            <Checkbox
-                                onChange={() => handleCheckbox(field)}
-                                checked={colMap.get(field)}/>
-                            <ListItemText
-                                primary={field}/>
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <Button
+                style={{color: "black", borderColor: "black"}}
+                component="label"
+                variant="outlined"
+                size="small"
+                onClick={() => setHandleModal(true)}>
+                Manage Columns
+            </Button>
+            <Modal
+                open={handleModal}
+                onClose={() => setHandleModal(false)}>
+                <Box sx={style}>
+                        <Typography variant="h5" sx={{display: "flex", justifyContent: "center", pb: 2}}>Manage Column Visibility</Typography>
+                        <FormControl>
+                            {colFields.map((field) => (
+                                <MenuItem
+                                    sx={{display: "flex", justifyContent: "start", pl: 0}}
+                                    key={field} value={field}>
+                                    <Checkbox
+                                        onChange={() => handleCheckbox(field)}
+                                        checked={colMap.get(field)}/>
+                                    <ListItemText
+                                        primary={field}/>
+                                </MenuItem>
+                            ))}
+                        </FormControl>
+                </Box>
+            </Modal>
         </Stack>
     )
 }
