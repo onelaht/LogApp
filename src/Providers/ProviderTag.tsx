@@ -1,17 +1,19 @@
 import React, {createContext, ReactNode, useContext, useState} from 'react';
+import {Row} from "../Types/Row";
+import {ColDef} from "ag-grid-community";
 
 interface ITagContextType {
-    tagMap: Map<string, string[]>;
-    setTagMap: React.Dispatch<React.SetStateAction<Map<string, string[]>>>;
+    tagDefs: ColDef<Row>[];
+    setTagDefs: React.Dispatch<React.SetStateAction<ColDef<Row>[]>>;
 }
 
 const TagContext = createContext<ITagContextType | null>(null);
 
 export default function ProviderTag({children}:{children: ReactNode}) {
     //
-    const [tagMap, setTagMap] = useState<Map<string, string[]>>(new Map<string, string[]>());
+    const [tagDefs, setTagDefs] = useState<ColDef<Row>[]>([]);
     return (
-        <TagContext value={{tagMap, setTagMap}}>
+        <TagContext value={{tagDefs, setTagDefs}}>
             {children}
         </TagContext>
     )
