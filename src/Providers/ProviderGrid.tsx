@@ -14,6 +14,7 @@ interface IGridContextType {
     gridData: string | null;
     setGridData: React.Dispatch<React.SetStateAction<string | null>>;
     colDefs:ColDef<Row>[];
+    setColDefs: React.Dispatch<React.SetStateAction<ColDef<Row>[]>>;
     colFields:string[];
 }
 
@@ -35,7 +36,7 @@ export default function ProviderGrid({children}:{children: ReactNode}) {
     // - specifies data type used
     // - specifies filter type
     // - implements apply and reset butttons
-    const colDefs:ColDef<Row>[] = useMemo(() => [
+    const [colDefs, setColDefs] = useState<ColDef<Row>[] >([
         {
             field: "Entry DateTime",
             cellDataType: "dateTimeString",
@@ -240,7 +241,7 @@ export default function ProviderGrid({children}:{children: ReactNode}) {
             field: "Note",
             cellDataType: "text",
         },
-    ], [convertDuration])
+    ])
 
     const colFields = useMemo(() => {
         return colDefs.map((i:ColDef<Row>) => {
@@ -249,7 +250,7 @@ export default function ProviderGrid({children}:{children: ReactNode}) {
     }, [colDefs])
 
     return(
-        <GridContext value={{gridRef, gridData, setGridData, colDefs, colFields}}>
+        <GridContext value={{gridRef, gridData, setGridData, colDefs, setColDefs, colFields}}>
             {children}
         </GridContext>
     )
