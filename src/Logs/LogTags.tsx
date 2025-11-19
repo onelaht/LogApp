@@ -33,6 +33,11 @@ export default function LogTags() {
     const [draftTagName, setDraftTagName] = useState<string>("");
     const [draftParameters, setDraftParameters] = useState<string[]>([""]);
 
+    // returns tagDefs without the specified def
+    const tagDefsExcept = useCallback((def:ColDef<Row>) => {
+        return tagDefs.filter((t) => t !== def);
+    }, [tagDefs])
+
     // build new tag and push to column list
     const handleNewTag = useCallback(() => {
         // build new tag
@@ -58,6 +63,9 @@ export default function LogTags() {
             tempDefs.push(col);
             return tempDefs;
         })
+        // reset text fields
+        setTagName("");
+        setParameters([""]);
     }, [tagName, parameters, setColDefs, setTagDefs])
 
     // removes tag from column list
@@ -70,6 +78,16 @@ export default function LogTags() {
         })
     }, [setColDefs, setTagDefs])
 
+    // update edit tracker and copy current tag name/params for revision
+    const handleEditState = useCallback((col:ColDef<Row>, ) => {
+        (col.field === edit) ? setEdit("") : setEdit(col.field as string);
+        // initialize draft values from current definition
+        setDraftTagName(col.field as string);
+        setDraftParameters(() => {
+            return [...col.cellEditorParams.values];
+        })
+    }, [edit])
+
     // update parameter value when updated
     const handleParametersChange = (value: string, index: number, handler:React.Dispatch<React.SetStateAction<string[]>>) => {
         handler(prev => {
@@ -80,15 +98,26 @@ export default function LogTags() {
         })
     }
 
-    // update edit tracker and copy current tag name/params for revision
-    const handleEditState = useCallback((col:ColDef<Row>, ) => {
-        (col.field === edit) ? setEdit("") : setEdit(col.field as string);
-        // initialize draft values from current definition
-        setDraftTagName(col.field as string);
-        setDraftParameters(() => {
-            return [...col.cellEditorParams.values];
-        })
-    }, [edit])
+    // determines if tag name already exists in def array
+    // - returns true if tag name already exists
+    // - returns false if tag name is unused
+    const validateTag = (name: string, defs:ColDef<Row>[]) => {
+        return (defs.filter((i) => i.field === name).length > 0);
+    }
+
+    // determines if all parameters are filled
+    // - returns true if each params contains a value
+    // - returns false if at least one param is empty
+    const validateParameters = (params: string[]) => {
+        return (params.filter((i) => i.length < 1).length > 0);
+    }
+
+    // determines if revised def is the same the original def
+    // - returns true if it contains the same value
+    // - returns false if it contains different values
+    const isEqual = (name:string, params:string[], def:ColDef<Row>) => {
+        return (def.field === name && JSON.stringify(def.cellEditorParams.values) === JSON.stringify(params))
+    }
 
     // update tag based on user input and update column list
     const handleExistingTag = useCallback((oldTag:ColDef<Row>) => {
@@ -158,7 +187,11 @@ export default function LogTags() {
                                    <TextField
                                        label="Tag Name"
                                        disabled={edit !== i.field as string}
-                                       onChange={(e:ChangeEvent<HTMLInputElement>) => setDraftTagName(e.target.value)}
+                                       error={(edit === i.field as string) && validateTag(draftTagName, tagDefsExcept(i))}
+                                       helperText={(edit === i.field as string) &&
+                                           (validateTag(draftTagName, tagDefsExcept(i)) && "Tag name already exists")}
+                                       onChange={(e:ChangeEvent<HTMLInputElement>) =>
+                                           setDraftTagName(e.target.value)}
                                        value={edit !== i.field ? i.field : draftTagName}/>
                                </Box>
                                <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
@@ -167,7 +200,8 @@ export default function LogTags() {
                                        <TextField
                                            sx={{pb: 1.5}}
                                            disabled={false}
-                                           onChange={(e) => handleParametersChange(e.target.value, index, setDraftParameters)}
+                                           onChange={(e) =>
+                                               handleParametersChange(e.target.value, index, setDraftParameters)}
                                            label={`Parameter ${index+1}`}
                                            value={j}/>
                                    ))}
@@ -186,6 +220,9 @@ export default function LogTags() {
                                            Add Parameter
                                        </Button>
                                        <Button
+                                           disabled={draftTagName.length < 1 || validateParameters(draftParameters) ||
+                                               validateTag(draftTagName, tagDefsExcept(i)) ||
+                                               isEqual(draftTagName, draftParameters, i)}
                                            onClick={() => handleExistingTag(i)}>
                                            Save Changes
                                        </Button>
@@ -205,6 +242,8 @@ export default function LogTags() {
                     <Box sx={{m: 1}}>
                         <TextField
                             label="Tag Name"
+                            error={validateTag(tagName, tagDefs)}
+                            helperText={validateTag(tagName, tagDefs) && "Tag name already exists"}
                             value={tagName}
                             onChange={(e) => setTagName(e.target.value)}/>
                     </Box>
@@ -215,7 +254,8 @@ export default function LogTags() {
                                 sx={{pb: 1.5}}
                                 label={`Parameter ${index+1}`}
                                 value={param}
-                                onChange={(e) => handleParametersChange(e.target.value, index, setParameters)}
+                                onChange={(e) =>
+                                    handleParametersChange(e.target.value, index, setParameters)}
                             />
                         ))}
                         <Button
@@ -225,6 +265,8 @@ export default function LogTags() {
                         <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
                         <Button
                             variant="outlined"
+                            disabled={tagName.length < 1 || validateTag(tagName, tagDefs) ||
+                                validateParameters(parameters)}
                             onClick={handleNewTag}>
                             Create tag
                         </Button>
