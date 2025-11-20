@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 // mui icons
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// mui styling
+import {LogTagsMUI} from "./LogTagsMUI"
 
 export default function LogTags() {
     // global vars
@@ -151,7 +153,7 @@ export default function LogTags() {
     }, [draftTagName, draftParameters, setColDefs, setTagDefs])
 
     return (
-        <Box sx={{m:2}}>
+        <Box sx={LogTagsMUI.Container}>
             <Accordion defaultExpanded>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon/>}>
@@ -169,21 +171,21 @@ export default function LogTags() {
                                <Typography variant="body1">{i.field}</Typography>
                            </AccordionSummary>
                            <AccordionDetails>
-                               <Box sx={{pb: 1, display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
+                               <Box sx={LogTagsMUI.EditDeleteContainer}>
                                    <Button
-                                       sx={{ml: 1, mr: 1}}
+                                       sx={LogTagsMUI.EditDeleteButton}
                                        size="small"
                                        onClick={() => handleEditState(i)}>
                                        {edit === i.field as string ? "Disable Edit" : "Enable Edit"}
                                    </Button>
                                    <Button
-                                       sx={{ml: 1, mr: 1}}
+                                       sx={LogTagsMUI.EditDeleteButton}
                                        size="small"
                                        onClick={() => handleDeleteTag(i)}>
                                        Delete
                                    </Button>
                                </Box>
-                               <Box sx={{m: 1}}>
+                               <Box sx={LogTagsMUI.TagNameContainer}>
                                    <TextField
                                        label="Tag Name"
                                        disabled={edit !== i.field as string}
@@ -194,11 +196,11 @@ export default function LogTags() {
                                            setDraftTagName(e.target.value)}
                                        value={edit !== i.field ? i.field : draftTagName}/>
                                </Box>
-                               <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
-                               <Box sx={{m: 1, display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                               <Divider sx={LogTagsMUI.Divider}/>
+                               <Box sx={LogTagsMUI.TagParamContainer}>
                                    {edit === i.field as string && draftParameters.map((j:string, index: number) => (
                                        <TextField
-                                           sx={{pb: 1.5}}
+                                           sx={LogTagsMUI.TagParamText}
                                            disabled={false}
                                            onChange={(e) =>
                                                handleParametersChange(e.target.value, index, setDraftParameters)}
@@ -207,14 +209,14 @@ export default function LogTags() {
                                    ))}
                                    {edit !== i.field as string && i.cellEditorParams.values.map((j:string, index: number) => (
                                        <TextField
-                                           sx={{pb: 1.5}}
+                                           sx={LogTagsMUI.TagParamText}
                                            disabled={true}
                                            label={`Parameter ${index+1}`}
                                            value={j}/>
                                    ))}
                                </Box>
                                {edit === i.field as string &&
-                                   <Box sx={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                                   <Box sx={LogTagsMUI.ParamAddSaveContainer}>
                                        <Button
                                            onClick={() => setDraftParameters(prev =>  [...prev, ""])}>
                                            Add Parameter
@@ -239,7 +241,7 @@ export default function LogTags() {
                     <Typography variant="body1">Create new tag</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Box sx={{m: 1}}>
+                    <Box sx={LogTagsMUI.TagNameContainer}>
                         <TextField
                             label="Tag Name"
                             error={validateTag(tagName, tagDefs)}
@@ -247,11 +249,11 @@ export default function LogTags() {
                             value={tagName}
                             onChange={(e) => setTagName(e.target.value)}/>
                     </Box>
-                    <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
-                    <Box sx={{m: 1, display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                    <Divider sx={LogTagsMUI.Divider}/>
+                    <Box sx={LogTagsMUI.TagParamContainer}>
                         {parameters.map((param, index) => (
                             <TextField
-                                sx={{pb: 1.5}}
+                                sx={LogTagsMUI.TagParamText}
                                 label={`Parameter ${index+1}`}
                                 value={param}
                                 onChange={(e) =>
@@ -262,7 +264,7 @@ export default function LogTags() {
                             onClick={() => setParameters(prev => [...prev, ""])}>
                             Add parameter
                         </Button>
-                        <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
+                        <Divider sx={LogTagsMUI.Divider}/>
                         <Button
                             variant="outlined"
                             disabled={tagName.length < 1 || validateTag(tagName, tagDefs) ||
