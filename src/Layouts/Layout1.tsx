@@ -15,7 +15,7 @@ export const Layout1 = {
                     type: "tab",
                     name: "Manage Tags",
                     component: "Tags",
-                    borderWidth: 250,
+                    borderWidth: 350,
                 }
             ]
         }
