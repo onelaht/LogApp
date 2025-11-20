@@ -13,10 +13,7 @@ export const LogTagsMUI = {
         ml: 1,
         mr: 1
     },
-    TagNameContainer: {
-        m:1
-    },
-    TagParamContainer: {
+    TagContainer: {
         m:1,
         display: "flex",
         flexDirection: "column",

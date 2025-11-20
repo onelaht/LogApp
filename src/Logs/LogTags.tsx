@@ -185,7 +185,7 @@ export default function LogTags() {
                                        Delete
                                    </Button>
                                </Box>
-                               <Box sx={LogTagsMUI.TagNameContainer}>
+                               <Box sx={LogTagsMUI.TagContainer}>
                                    <TextField
                                        label="Tag Name"
                                        disabled={edit !== i.field as string}
@@ -197,7 +197,7 @@ export default function LogTags() {
                                        value={edit !== i.field ? i.field : draftTagName}/>
                                </Box>
                                <Divider sx={LogTagsMUI.Divider}/>
-                               <Box sx={LogTagsMUI.TagParamContainer}>
+                               <Box sx={LogTagsMUI.TagContainer}>
                                    {edit === i.field as string && draftParameters.map((j:string, index: number) => (
                                        <TextField
                                            sx={LogTagsMUI.TagParamText}
@@ -241,7 +241,7 @@ export default function LogTags() {
                     <Typography variant="body1">Create new tag</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Box sx={LogTagsMUI.TagNameContainer}>
+                    <Box sx={LogTagsMUI.TagContainer}>
                         <TextField
                             label="Tag Name"
                             error={validateTag(tagName, tagDefs)}
@@ -250,7 +250,7 @@ export default function LogTags() {
                             onChange={(e) => setTagName(e.target.value)}/>
                     </Box>
                     <Divider sx={LogTagsMUI.Divider}/>
-                    <Box sx={LogTagsMUI.TagParamContainer}>
+                    <Box sx={LogTagsMUI.TagContainer}>
                         {parameters.map((param, index) => (
                             <TextField
                                 sx={LogTagsMUI.TagParamText}
