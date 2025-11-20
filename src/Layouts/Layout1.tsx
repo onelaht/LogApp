@@ -7,8 +7,15 @@ export const Layout1 = {
             children: [
                 {
                     type: "tab",
-                    name: "Test",
-                    component: "Placeholder",
+                    name: "Column Visibility",
+                    component: "ColumnVisibility",
+                    borderWidth: 250,
+                },
+                {
+                    type: "tab",
+                    name: "Manage Tags",
+                    component: "Tags",
+                    borderWidth: 350,
                 }
             ]
         }

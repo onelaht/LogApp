@@ -6,6 +6,8 @@ import 'flexlayout-react/style/light.css';
 import {Layout1} from '../Layouts/Layout1';
 // split component
 import LogTable from "./LogTable"
+import LogColVisibility from "./LogColVisibility";
+import LogTags from "./LogTags";
 
 export default function LogLayout() {
     // reference for flexlayout (used in the future)
@@ -20,7 +22,8 @@ export default function LogLayout() {
         const component = node.getComponent();
         // render additional components based on value
         switch(component) {
-            case "Placeholder": return <div>{node.getName()}</div>
+            case "ColumnVisibility": return <LogColVisibility/>
+            case "Tags": return <LogTags/>
             case "Table": return <LogTable/>
         }
     }, [])
