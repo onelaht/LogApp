@@ -1,16 +1,19 @@
 .Container {
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    height: 100vh;
+    width: 100vw
 }
 
 .Toolbar {
+    display: flex;
     position: relative;
-    margin: 0.125rem;
+    margin: 0.25rem;
     height: fit-content;
 }
 
 .Layout {
+    display: flex;
     margin-top: auto;
     position: relative;
     height: 100vh;
