@@ -48,7 +48,7 @@ export default function LogTable() {
     }, [gridData])
 
     return (
-        <div style={{ height: "100vh", width: "100vw"}}>
+        <div style={{ height: "100%", width: "100%"}}>
             <AgGridReact
                 ref={gridRef}
                 theme={themeAlpine}
