@@ -11,7 +11,7 @@ export const Layout1:IJsonModel = {
                     type: "tab",
                     name: "Column Visibility",
                     component: "ColumnVisibility",
-                    borderWidth: 250,
+                    borderWidth: 275,
                     enableClose: false,
                 },
                 {
