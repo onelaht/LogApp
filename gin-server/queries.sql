@@ -1,0 +1,10 @@
+-- name: CreateAccount :one
+INSERT INTO accounts (
+    name, colDefs, tagDefs, rowData
+) VALUES (
+    $1, $2, $3, $4
+)
+RETURNING *;
+
+-- name: GetAllAccounts :many
+SELECT * FROM accounts;
