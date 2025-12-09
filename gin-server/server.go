@@ -2,28 +2,15 @@ package main
 
 import (
 	"example/gin-server/userdata"
-	"fmt"
+
+	"example/gin-server/types"
+
+	"example/gin-server/db_accounts"
+
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-type rawFile struct {
-	UserData string `json:"userData"`
-}
-
-type colDef struct {
-	CellDataType string              `json:"cellDataType"`
-	Field        string              `json:"field"`
-	Filter       string              `json:"filter"`
-	FilterParams map[string][]string `json:"filterParams"`
-}
-type account struct {
-	AccName string              `json:"accName"`
-	RowData []map[string]string `json:"rowData"`
-	ColDefs []colDef            `json:"colDefs"`
-	TagDefs []colDef            `json:"tagDefs"`
-}
 
 // rawUpload
 // converts raw user data (TXT) to array of tuples
@@ -31,7 +18,7 @@ type account struct {
 // - returns nil if raw user data is empty
 // - returns error message if any error occurs
 func rawUpload(c *gin.Context) {
-	var data rawFile
+	var data types.RawFile
 	// prompt if error occurs
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -46,13 +33,20 @@ func rawUpload(c *gin.Context) {
 }
 
 func saveNewAccount(c *gin.Context) {
-	var data account
-	// prompt if error occurs
+	var data types.Account
+	// prompt if error occurs during data retrieval
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println(data.AccName)
+	err := db_accounts.NewAccount(data)
+	// prompt if error occurs during data insertion
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// return 200
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // contains endpoint initialization and handlers
