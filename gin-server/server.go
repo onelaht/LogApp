@@ -49,6 +49,12 @@ func saveNewAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
+func retrieveAccounts(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"data": db_accounts.GetAllAccount(),
+	})
+}
+
 // contains endpoint initialization and handlers
 func main() {
 	// initialize gin
@@ -56,6 +62,7 @@ func main() {
 	// upload endpoint handler
 	router.POST("/upload", rawUpload)
 	router.POST("/saveNewAccount", saveNewAccount)
+	router.GET("/retrieveAccounts", retrieveAccounts)
 	// run via localhost:5000
 	err := router.Run(":5000")
 	// exit if any error occurs

@@ -3,7 +3,6 @@ package db_accounts
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/jackc/pgx/v5"
 
@@ -14,7 +13,7 @@ import (
 
 func NewAccount(acc types.Account) error {
 	ctx := context.Background()
-	fmt.Println("here")
+	// connect to tdb
 	conn, err := pgx.Connect(ctx, "postgres://user1:pass@localhost:5432/db1_proj1?sslmode=disable")
 	if err != nil {
 		return err
@@ -39,4 +38,39 @@ func NewAccount(acc types.Account) error {
 		return err
 	}
 	return nil
+}
+
+func GetAllAccount() []types.Account {
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, "postgres://user1:pass@localhost:5432/db1_proj1?sslmode=disable")
+	if err != nil {
+		return nil
+	}
+	defer conn.Close(ctx)
+	queries := db.New(conn)
+
+	table, err := queries.GetAllAccounts(ctx)
+	if err != nil {
+		return nil
+	}
+
+	var accounts []types.Account
+	for _, value := range table {
+		var account types.Account
+		account.AccName = value.Name
+		err := json.Unmarshal(value.Coldefs, &account.ColDefs)
+		if err != nil {
+			continue
+		}
+		err = json.Unmarshal(value.Tagdefs, &account.TagDefs)
+		if err != nil {
+			continue
+		}
+		err = json.Unmarshal(value.Rowdata, &account.RowData)
+		if err != nil {
+			continue
+		}
+		accounts = append(accounts, account)
+	}
+	return accounts
 }
