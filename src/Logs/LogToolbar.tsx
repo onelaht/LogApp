@@ -1,13 +1,19 @@
 // react
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 // global vars
 import { useGrid } from "../Providers/ProviderGrid";
 // mui components
-import {Button, styled} from "@mui/material";
+import {Button, Stack, styled} from "@mui/material";
+// mui styling
+import {LogToolbarMUI, HiddenInput} from "./LogToolbarMUI";
 
 export default function LogToolbar() {
+    // global vars
+    const {setGridData} = useGrid();
+    // store user dataafalse
     const [rawString, setRawString] = useState<ArrayBuffer | string | null>(null);
-    const { setGridData } = useGrid();
+    // MUI; hidden file upload form
+    const VisuallyHiddenInput = styled('input')(HiddenInput);
 
     // read in and save user data
     const readInFile = useCallback((data:File | null) => {
@@ -21,6 +27,7 @@ export default function LogToolbar() {
         reader.readAsBinaryString(data);
     }, [])
 
+    // initialize grid data
     useEffect(() => {
         // leave if uploaded data is empty
         if(!rawString) return;
@@ -31,23 +38,10 @@ export default function LogToolbar() {
         }
     }, [rawString, setGridData])
 
-    // from MUI docs; hidden file upload form
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
-
     return (
-        <>
+        <Stack direction="row" gap={1}>
             <Button
-                style={{color: "black", borderColor: "black"}}
+                sx={LogToolbarMUI.ButtonSx}
                 component="label"
                 variant="outlined"
                 size="small"
@@ -59,6 +53,6 @@ export default function LogToolbar() {
                     accept="csv"
                 />
             </Button>
-        </>
+        </Stack>
     )
 }
