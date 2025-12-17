@@ -1,4 +1,6 @@
-export const Layout1 = {
+import {IJsonModel} from "flexlayout-react";
+
+export const Layout1:IJsonModel = {
     global: {},
     borders: [
         {
@@ -9,13 +11,15 @@ export const Layout1 = {
                     type: "tab",
                     name: "Column Visibility",
                     component: "ColumnVisibility",
-                    borderWidth: 250,
+                    borderWidth: 275,
+                    enableClose: false,
                 },
                 {
                     type: "tab",
                     name: "Manage Tags",
                     component: "Tags",
                     borderWidth: 350,
+                    enableClose: false,
                 }
             ]
         }
@@ -32,6 +36,7 @@ export const Layout1 = {
                         type: "tab",
                         name: "Table",
                         component: "Table",
+                        enableClose: false,
                     }
                 ]
             }

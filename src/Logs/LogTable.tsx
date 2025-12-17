@@ -9,6 +9,8 @@ import { useGrid } from "../Providers/ProviderGrid";
 import { useFilter } from "../Providers/ProviderFilter";
 // types
 import { Row } from "../Types/Row";
+// styling
+import "./LogTable.css";
 
 export default function LogTable() {
     // global vars
@@ -48,7 +50,7 @@ export default function LogTable() {
     }, [gridData])
 
     return (
-        <div style={{ height: "100vh", width: "100vw"}}>
+        <div className="GridContainer">
             <AgGridReact
                 ref={gridRef}
                 theme={themeAlpine}
