@@ -7,6 +7,7 @@ import {Layout1} from '../Layouts/Layout1';
 // split component
 import LogTable from "./LogTable"
 import LogColVisibility from "./LogColVisibility";
+import LogTags from "./LogTags";
 
 export default function LogLayout() {
     // reference for flexlayout (used in the future)
@@ -22,6 +23,7 @@ export default function LogLayout() {
         // render additional components based on value
         switch(component) {
             case "ColumnVisibility": return <LogColVisibility/>
+            case "Tags": return <LogTags/>
             case "Table": return <LogTable/>
         }
     }, [])

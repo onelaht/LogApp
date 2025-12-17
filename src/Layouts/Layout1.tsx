@@ -10,6 +10,12 @@ export const Layout1 = {
                     name: "Column Visibility",
                     component: "ColumnVisibility",
                     borderWidth: 250,
+                },
+                {
+                    type: "tab",
+                    name: "Manage Tags",
+                    component: "Tags",
+                    borderWidth: 350,
                 }
             ]
         }
