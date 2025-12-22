@@ -9,14 +9,21 @@ export const Layout1:IJsonModel = {
             children: [
                 {
                     type: "tab",
-                    name: "Column Visibility",
+                    name: "Accounts",
+                    component: "Accounts",
+                    borderWidth: 275,
+                    enableClose: false,
+                },
+                {
+                    type: "tab",
+                    name: "Columns",
                     component: "ColumnVisibility",
                     borderWidth: 275,
                     enableClose: false,
                 },
                 {
                     type: "tab",
-                    name: "Manage Tags",
+                    name: "Tags",
                     component: "Tags",
                     borderWidth: 350,
                     enableClose: false,
