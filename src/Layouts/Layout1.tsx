@@ -11,14 +11,14 @@ export const Layout1:IJsonModel = {
                     type: "tab",
                     name: "Accounts",
                     component: "Accounts",
-                    borderWidth: 275,
+                    borderWidth: 350,
                     enableClose: false,
                 },
                 {
                     type: "tab",
                     name: "Columns",
                     component: "ColumnVisibility",
-                    borderWidth: 275,
+                    borderWidth: 350,
                     enableClose: false,
                 },
                 {
