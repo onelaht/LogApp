@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 // global vars
 import {useGrid} from "../Providers/ProviderGrid";
 // mui components
-import {Checkbox, FormControl, ListItemText, MenuItem} from "@mui/material";
+import {Box, Checkbox, FormControl, ListItemText, MenuItem} from "@mui/material";
 // mui styling
 import {LogColVisibilityMUI} from "./LogColVisibilityMUI";
 
@@ -49,7 +49,7 @@ export default function LogColVisibility() {
     }, [colMap, colVisibility])
 
     return (
-        <>
+        <Box sx={LogColVisibilityMUI.Container}>
             <FormControl>
                 {colFields.map((field) => (
                     <MenuItem
@@ -63,6 +63,6 @@ export default function LogColVisibility() {
                     </MenuItem>
                 ))}
             </FormControl>
-        </>
+        </Box>
     )
 }

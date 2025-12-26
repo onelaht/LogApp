@@ -2,22 +2,24 @@ package main
 
 import (
 	"example/gin-server/userdata"
+
+	"example/gin-server/types"
+
+	"example/gin-server/db_accounts"
+
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type DataReceived struct {
-	UserData string `json:"userData"`
-}
-
-// handleUpload
+// rawUpload
 // converts raw user data (TXT) to array of tuples
 // - returns 2D array of user data
 // - returns nil if raw user data is empty
 // - returns error message if any error occurs
-func handleUpload(c *gin.Context) {
-	var data DataReceived
+func rawUpload(c *gin.Context) {
+	var data types.RawFile
+	// prompt if error occurs
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -30,12 +32,37 @@ func handleUpload(c *gin.Context) {
 	})
 }
 
+func saveNewAccount(c *gin.Context) {
+	var data types.Account
+	// prompt if error occurs during data retrieval
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	err := db_accounts.NewAccount(data)
+	// prompt if error occurs during data insertion
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	// return 200
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+func retrieveAccounts(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"data": db_accounts.GetAllAccount(),
+	})
+}
+
 // contains endpoint initialization and handlers
 func main() {
 	// initialize gin
 	router := gin.Default()
 	// upload endpoint handler
-	router.POST("/upload", handleUpload)
+	router.POST("/upload", rawUpload)
+	router.POST("/saveNewAccount", saveNewAccount)
+	router.GET("/retrieveAccounts", retrieveAccounts)
 	// run via localhost:5000
 	err := router.Run(":5000")
 	// exit if any error occurs
