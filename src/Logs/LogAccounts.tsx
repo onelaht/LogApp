@@ -1,10 +1,16 @@
-import {Box, Accordion, AccordionSummary, AccordionDetails, Typography, styled, Button, Divider, TextField} from '@mui/material'
+// react
+import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
+// MUI
+import {Box, Accordion, AccordionSummary, AccordionDetails,
+        Typography, styled, Button, Divider, TextField} from '@mui/material'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {HiddenInput} from "./LogToolbarMUI";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+// MUI styling
+import {HiddenInput, LogAccountsMUI} from "./LogAccountsMUI";
+// global vars
 import {useGrid} from "../Providers/ProviderGrid";
-import {Row} from "../Types/Row";
 import {useTag} from "../Providers/ProviderTag";
+// types
+import {Row} from "../Types/Row";
 
 export default function LogAccounts() {
     // global vars
@@ -79,7 +85,7 @@ export default function LogAccounts() {
     }, [gridRef, unsplitDef, tagDefs, accountName])
 
     return (
-        <Box sx={{m:2}}>
+        <Box sx={LogAccountsMUI.Container}>
             <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                     <Typography> Accounts </Typography>
@@ -93,38 +99,41 @@ export default function LogAccounts() {
                     <Typography>Create new account</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Box sx={{m: 1, display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                    <Box sx={LogAccountsMUI.TabFlexCenteredContainer}>
                         <TextField
                             label={"Account Name"}
                             value={accountName}
-                            onChange={(e) => setAccountName(e.target.value)}
+                            onChange={(e:ChangeEvent<HTMLInputElement>) => setAccountName(e.target.value)}
                         />
                     </Box>
-                    <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
-                    <Box sx={{m: 1, display: "flex", flexDirection: "column"}}>
-                        <Box sx={{display: "grid", gridTemplateColumns: "50% 50%"}}>
-                            <Box sx={{gridColumnStart: 1, gridColumnEnd: "span 1"}}>
+                    <Divider sx={LogAccountsMUI.Divider}/>
+                    <Box sx={LogAccountsMUI.TabFlexContainer}>
+                        <Box sx={LogAccountsMUI.UploadGridContainer}>
+                            <Box sx={LogAccountsMUI.UploadGridCol1}>
                                 <Button
                                     variant="outlined"
                                     component="label"
                                     size="small"
-                                    sx={{width: "100%", color: "black", borderColor: "darkgray"}}
+                                    sx={LogAccountsMUI.UploadButton}
                                 >
                                     Upload Log
                                     <VisuallyHiddenInput
                                         type="file"
-                                        onChange={(e:any) => readInFile(e.target.files?.[0])}
+                                        onChange={(e:ChangeEvent<HTMLInputElement>) =>
+                                            readInFile(e.target.files?.[0] ?? null)}
                                         accept="csv"
                                     />
                                 </Button>
                             </Box>
-                            <Box sx={{gridColumnStart: 2, gridColumnEnd: "span 1", justifySelf: "center", alignSelf: "center", overflowX: "scroll"}}>
-                                    <Typography variant="subtitle2">{rawString ? filename : "No file selected"}</Typography>
+                            <Box sx={LogAccountsMUI.UploadGridCol2}>
+                                    <Typography variant="subtitle2">
+                                        {rawString ? filename : "No file selected"}
+                                    </Typography>
                             </Box>
                         </Box>
                     </Box>
-                    <Divider sx={{ml: 1, mr: 1, mt: 2, mb: 2}}/>
-                    <Box sx={{m: 1, display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                    <Divider sx={LogAccountsMUI.Divider}/>
+                    <Box sx={LogAccountsMUI.TabFlexCenteredContainer}>
                         <Button
                             variant="outlined"
                             disabled={!rawString || accountName === ""}
