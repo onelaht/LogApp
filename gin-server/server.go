@@ -51,7 +51,7 @@ func saveNewAccount(c *gin.Context) {
 
 func retrieveAccounts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"data": db_accounts.GetAllAccount(),
+		"accounts": db_accounts.GetAllAccount(),
 	})
 }
 
