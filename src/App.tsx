@@ -4,14 +4,25 @@ import React from 'react';
 import "./App.css"
 // split components
 import LogLayout from "./Logs/LogLayout";
-// global vars
 import ProviderApp from "./Providers/ProviderApp";
+import LogFetcher from "./Logs/LogFetcher";
+// global vars
+import {useFetcher} from "./Providers/ProviderFetcher";
 
 function AppInner() {
+    const {fetched} = useFetcher();
+
   return (
-      <div className="Container">
-          <div className="Layout"><LogLayout/></div>
-      </div>
+      <>
+          {fetched ?
+              <div className="Container">
+                  <div className="Layout"><LogLayout/></div>
+              </div> :
+              <div className="Container">
+                <div className="Layout"><LogFetcher/></div>
+              </div>
+          }
+      </>
   );
 }
 
