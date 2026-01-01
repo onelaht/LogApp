@@ -11,16 +11,13 @@ import {useGrid} from "../Providers/ProviderGrid";
 import {useTag} from "../Providers/ProviderTag";
 // types
 import {Row} from "../Types/Row";
-import {IAccount} from "../Types/IAccount";
 
 export default function LogAccounts() {
     // global vars
-    const {setGridData, gridRef, colDefs} = useGrid();
+    const {setGridData, gridRef, colDefs, accounts} = useGrid();
     const {tagDefs} = useTag();
     // MUI; hidden file upload form
     const VisuallyHiddenInput = styled('input')(HiddenInput);
-    // all accounts
-    const [accounts, setAccounts] = useState<IAccount[]>([]);
     // store account name
     const [accountName, setAccountName] = useState<string>("");
     // store filename
@@ -40,27 +37,6 @@ export default function LogAccounts() {
             setRawString(reader.result);
         }
         reader.readAsBinaryString(data);
-    }, [])
-
-    // retrieve accounts from backend
-    const fetchAccounts = useCallback(async () => {
-        // fetch data
-        const res = await fetch("/api/retrieveAccounts")
-        // if any error occurs
-        if(!res.ok) {
-            const err = res.text();
-            console.error("Error occurred in fetchAccounts: ", res.status, err);
-        }
-        // get values
-        const data = await res.json();
-        // if not empty
-        if(data?.accounts?.length > 0)
-            setAccounts(data.accounts);
-    }, [])
-
-    // get account list
-    useEffect(() => {
-        fetchAccounts();
     }, [])
 
     // initialize grid data
