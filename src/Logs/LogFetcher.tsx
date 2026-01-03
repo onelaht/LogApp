@@ -1,8 +1,9 @@
-import { CircularProgress, Typography } from "@mui/material";
+import {Box, CircularProgress, Typography } from "@mui/material";
 import {useFetcher} from "../Providers/ProviderFetcher";
 import {useCallback, useEffect, useRef} from "react";
 import {useGrid} from "../Providers/ProviderGrid";
 import {IAccount} from "../Types/IAccount";
+import {LogFetcherMUI} from "./LogFetcherMUI";
 
 export default function LogFetcher() {
     // track prev state
@@ -11,7 +12,7 @@ export default function LogFetcher() {
     const {setFetched} = useFetcher();
     const {accounts, setAccounts} = useGrid();
 
-// retrieve accounts from backend
+    // retrieve accounts from backend
     const fetchAccounts = useCallback(async () => {
         // fetch data
         const res = await fetch("/api/retrieveAccounts")
@@ -39,9 +40,9 @@ export default function LogFetcher() {
     }, [accounts, fetchAccounts, setFetched])
 
     return (
-        <div style={{backgroundColor: "grey", width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-            <CircularProgress sx={{m: 1, color: "white"}}/>
-            <Typography sx={{m: 1, color: "white"}}>Loading data...</Typography>
-        </div>
+        <Box sx={LogFetcherMUI.Container}>
+            <CircularProgress sx={LogFetcherMUI.Spinner}/>
+            <Typography sx={LogFetcherMUI.Text}>Loading data...</Typography>
+        </Box>
     )
 }
