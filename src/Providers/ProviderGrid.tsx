@@ -8,6 +8,7 @@ import {ColDef, ValueFormatterParams, ValueGetterParams} from "ag-grid-community
 // filter components
 import FilterCheckboxSet from "../Filters/FilterCheckboxSet";
 import FilterDuration from "../Filters/FilterDuration";
+import {IAccount} from "../Types/IAccount";
 
 interface IGridContextType {
     gridRef: React.RefObject<AgGridReact<Row> | null>;
@@ -15,6 +16,8 @@ interface IGridContextType {
     setGridData: React.Dispatch<React.SetStateAction<string | null>>;
     colDefs:ColDef<Row>[];
     setColDefs: React.Dispatch<React.SetStateAction<ColDef<Row>[]>>;
+    accounts: IAccount[];
+    setAccounts: React.Dispatch<React.SetStateAction<IAccount[]>>;
     colFields:string[];
 }
 
@@ -23,6 +26,7 @@ const GridContext = createContext<IGridContextType | null>(null);
 export default function ProviderGrid({children}:{children: ReactNode}) {
     const gridRef = useRef<AgGridReact<Row> | null>(null);
     const [gridData, setGridData] = useState<string | null>(null);
+    const [accounts, setAccounts] = useState<IAccount[]>([]);
     const convertDuration = useCallback((seconds:number) => {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
@@ -250,7 +254,7 @@ export default function ProviderGrid({children}:{children: ReactNode}) {
     }, [colDefs])
 
     return(
-        <GridContext value={{gridRef, gridData, setGridData, colDefs, setColDefs, colFields}}>
+        <GridContext value={{gridRef, gridData, setGridData, colDefs, setColDefs, accounts, setAccounts, colFields}}>
             {children}
         </GridContext>
     )

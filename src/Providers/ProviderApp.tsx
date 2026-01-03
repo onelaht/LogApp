@@ -4,6 +4,7 @@ import {ReactNode} from "react";
 import ProviderFilter from "./ProviderFilter";
 import ProviderGrid from "./ProviderGrid";
 import ProviderTag from "./ProviderTag";
+import ProviderFetcher from "./ProviderFetcher";
 
 interface IProviderAppType{
     children: ReactNode;
@@ -14,7 +15,9 @@ export default function ProviderApp({children}:IProviderAppType) {
         <ProviderGrid>
             <ProviderFilter>
                 <ProviderTag>
-                    {children}
+                    <ProviderFetcher>
+                        {children}
+                    </ProviderFetcher>
                 </ProviderTag>
             </ProviderFilter>
         </ProviderGrid>

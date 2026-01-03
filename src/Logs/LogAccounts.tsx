@@ -14,7 +14,7 @@ import {Row} from "../Types/Row";
 
 export default function LogAccounts() {
     // global vars
-    const {setGridData, gridRef, colDefs} = useGrid();
+    const {setGridData, gridRef, colDefs, accounts} = useGrid();
     const {tagDefs} = useTag();
     // MUI; hidden file upload form
     const VisuallyHiddenInput = styled('input')(HiddenInput);
@@ -88,10 +88,12 @@ export default function LogAccounts() {
         <Box sx={LogAccountsMUI.Container}>
             <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                    <Typography> Accounts </Typography>
+                    <Typography>Accounts ({accounts.length})</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    test
+                    {accounts.length > 0 && accounts.map((i) => (
+                        <Typography>{i.accName}</Typography>
+                    ))}
                 </AccordionDetails>
             </Accordion>
             <Accordion defaultExpanded>
