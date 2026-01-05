@@ -1,9 +1,6 @@
-import {Row} from "./Row";
-import {ColDef} from "ag-grid-community";
+import {IAccountData} from "./IAccountData";
 
 export interface IAccount {
     accName: string,
-    rowData: Row[],
-    colDefs: ColDef[],
-    tagDefs: ColDef[],
+    data: IAccountData
 }
