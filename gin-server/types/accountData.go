@@ -1,7 +1,7 @@
 package types
 
 type AccountData struct {
-	RowData []map[string]string `json:"rowData"`
-	ColDefs []ColDef            `json:"colDefs"`
-	TagDefs []ColDef            `json:"tagDefs"`
+	RowData []map[string]string
+	ColDefs []ColDef
+	TagDefs []ColDef
 }
