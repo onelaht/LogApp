@@ -4,10 +4,11 @@ import {useCallback, useEffect, useRef} from "react";
 import {useGrid} from "../Providers/ProviderGrid";
 import {IAccount} from "../Types/IAccount";
 import {LogFetcherMUI} from "./LogFetcherMUI";
+import {IAccountData} from "../Types/IAccountData";
 
 export default function LogFetcher() {
     // track prev state
-    const prevAccounts = useRef<IAccount[] | null>(null);
+    const prevAccounts = useRef<Map<string, IAccountData>| null>(null);
     // global vars
     const {setFetched} = useFetcher();
     const {accounts, setAccounts} = useGrid();
@@ -23,10 +24,13 @@ export default function LogFetcher() {
         }
         // get values
         const data = await res.json();
-        // if not empty
+        // if not empty, initialize account map
         if(data?.accounts?.length > 0) {
-            setAccounts(data.accounts);
-            prevAccounts.current = data.accounts;
+            const temp:Map<string, IAccountData> = new Map<string, IAccountData>();
+            data.accounts.forEach((i:IAccount) => {
+                temp.set(i.AccName, i.Data);
+            })
+            setAccounts(temp);
         }
         setFetched(true);
     }, [setAccounts, setFetched, prevAccounts])
