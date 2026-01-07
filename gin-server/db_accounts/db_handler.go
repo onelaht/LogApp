@@ -3,36 +3,36 @@ package db_accounts
 import (
 	"context"
 	"encoding/json"
+	"example/gin-server/db"
+	"example/gin-server/types"
 
 	"github.com/jackc/pgx/v5"
-
-	"example/gin-server/db"
-
-	"example/gin-server/types"
 )
 
+// NewAccount
+// insert account data as new tuple
+// - returns nil if successful
+// - returns error message if any errors occurs
 func NewAccount(acc types.Account) error {
 	ctx := context.Background()
-	// connect to tdb
+	// connect user and db
 	conn, err := pgx.Connect(ctx, "postgres://user1:pass@localhost:5432/db1_proj1?sslmode=disable")
 	if err != nil {
 		return err
 	}
 	defer conn.Close(ctx)
-
+	// create instance to execute queries
 	queries := db.New(conn)
-
-	// jsonify map
-	coldefJson, _ := json.Marshal(acc.ColDefs)
-	tagdefsJson, _ := json.Marshal(acc.TagDefs)
-	rowdataJson, _ := json.Marshal(acc.RowData)
-
+	// jsonify data
+	mColDefs, _ := json.Marshal(acc.Data.ColDefs)
+	mTagDefs, _ := json.Marshal(acc.Data.TagDefs)
+	mRowData, _ := json.Marshal(acc.Data.RowData)
 	// create account
 	_, err = queries.CreateAccount(ctx, db.CreateAccountParams{
 		Name:    acc.AccName,
-		Coldefs: coldefJson,
-		Tagdefs: tagdefsJson,
-		Rowdata: rowdataJson,
+		Coldefs: mColDefs,
+		Tagdefs: mTagDefs,
+		Rowdata: mRowData,
 	})
 	if err != nil {
 		return err
@@ -40,8 +40,12 @@ func NewAccount(acc types.Account) error {
 	return nil
 }
 
+// GetAllAccount
+// retrieves all tuples from account table
+// - returns an empty array if empty or any error occurs
 func GetAllAccount() []types.Account {
 	ctx := context.Background()
+	// connect user and db
 	conn, err := pgx.Connect(ctx, "postgres://user1:pass@localhost:5432/db1_proj1?sslmode=disable")
 	if err != nil {
 		return nil
@@ -53,23 +57,25 @@ func GetAllAccount() []types.Account {
 	if err != nil {
 		return nil
 	}
-
+	// initialize array
 	var accounts []types.Account
 	for _, value := range table {
+		// cast type
+		var accData types.AccountData
 		var account types.Account
+		// unmarshal json
+		if err := json.Unmarshal(value.Coldefs, &accData.ColDefs); err != nil {
+			return nil
+		}
+		if err := json.Unmarshal(value.Rowdata, &accData.RowData); err != nil {
+			return nil
+		}
+		if err := json.Unmarshal(value.Tagdefs, &accData.TagDefs); err != nil {
+			return nil
+		}
+		// insert and append data
 		account.AccName = value.Name
-		err := json.Unmarshal(value.Coldefs, &account.ColDefs)
-		if err != nil {
-			continue
-		}
-		err = json.Unmarshal(value.Tagdefs, &account.TagDefs)
-		if err != nil {
-			continue
-		}
-		err = json.Unmarshal(value.Rowdata, &account.RowData)
-		if err != nil {
-			continue
-		}
+		account.Data = accData
 		accounts = append(accounts, account)
 	}
 	return accounts
