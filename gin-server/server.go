@@ -32,14 +32,22 @@ func rawUpload(c *gin.Context) {
 	})
 }
 
+// saveNewAccount
+// inserts account data to db
+// - returns 200 if successful
+// - returns error message if any error occurs
 func saveNewAccount(c *gin.Context) {
-	var data types.Account
+	// initialize payload and datatype
+	type payload struct {
+		Account types.Account `json:"acc"`
+	}
+	var data payload
 	// prompt if error occurs during data retrieval
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	err := db_accounts.NewAccount(data)
+	err := db_accounts.NewAccount(data.Account)
 	// prompt if error occurs during data insertion
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -49,6 +57,8 @@ func saveNewAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
+// retrieveAccounts
+// returns value of GetAllAccount()
 func retrieveAccounts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"accounts": db_accounts.GetAllAccount(),
