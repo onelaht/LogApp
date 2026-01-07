@@ -9,8 +9,10 @@ import {HiddenInput, LogAccountsMUI} from "./LogAccountsMUI";
 // global vars
 import {useGrid} from "../Providers/ProviderGrid";
 import {useTag} from "../Providers/ProviderTag";
-// types
+// types and interfaces
 import {Row} from "../Types/Row";
+import {IAccount} from "../Types/IAccount";
+import {IAccountData} from "../Types/IAccountData";
 
 export default function LogAccounts() {
     // global vars
@@ -71,11 +73,21 @@ export default function LogAccounts() {
         gridRef.current.api?.forEachNode((i) => {
             if(i?.data) rowData.push(i.data);
         });
+        // initialize account type
+        const accData:IAccountData = {
+            RowData: rowData,
+            ColDefs: unsplitDef,
+            TagDefs: tagDefs
+        };
+        const acc:IAccount = {
+            AccName: accountName,
+            Data: accData
+        };
         // send data to backend
         const res = await fetch("api/saveNewAccount", {
             method: "POST",
             headers: {'Content-Type': "application/json"},
-            body: JSON.stringify({accName: accountName, rowData: rowData, colDefs: unsplitDef, tagDefs: tagDefs})
+            body: JSON.stringify({acc: acc})
         });
         // if any error occurs, prompt err msg to console
         if(!res.ok) {
@@ -88,11 +100,15 @@ export default function LogAccounts() {
         <Box sx={LogAccountsMUI.Container}>
             <Accordion defaultExpanded>
                 <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                    <Typography>Accounts ({accounts.length})</Typography>
+                    <Typography>Accounts ({accounts.size})</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {accounts.length > 0 && accounts.map((i) => (
-                        <Typography>{i.accName}</Typography>
+                    {accounts.size > 0 && Array.from(accounts.entries()).map(([k, v]) => (
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                                <Typography>{k}</Typography>
+                            </AccordionSummary>
+                        </Accordion>
                     ))}
                 </AccordionDetails>
             </Accordion>
