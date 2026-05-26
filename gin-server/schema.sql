@@ -1,7 +1,12 @@
 DROP TABLE IF EXISTS accounts CASCADE;
+DROP TABLE IF EXISTS column_def_config CASCADE;
+DROP TABLE IF EXISTS tag_def_config CASCADE;
+DROP TABLE IF EXISTS sierra_data CASCADE;
+DROP TABLE IF EXISTS tag_defs CASCADE;
+DROP TABLE IF EXISTS sierra_data_tags CASCADE;
 
 CREATE TABLE accounts (
-    account_id INTEGER PRIMARY KEY,
+    account_id SERIAL PRIMARY KEY,
     account_name TEXT
 );
 
@@ -16,7 +21,7 @@ CREATE TABLE tag_def_config (
 );
 
 CREATE TABLE sierra_data (
-    sierra_data_id INTEGER PRIMARY KEY,
+    sierra_data_id SERIAL PRIMARY KEY,
     account_id INTEGER REFERENCES accounts(account_id),
     symbol TEXT,
     entry_datetime TIMESTAMP,
@@ -46,16 +51,16 @@ CREATE TABLE sierra_data (
     close_position_quantity INTEGER
 );
 
-CREATE TABLE tags_defs (
-    tag_def_id INTEGER PRIMARY KEY,
+CREATE TABLE tag_defs (
+    tag_def_id SERIAL PRIMARY KEY,
     account_id INTEGER REFERENCES accounts(account_id),
     tag_name TEXT,
     UNIQUE(account_id, tag_name)
 );
 
 CREATE TABLE sierra_data_tags (
-    sierra_data_tag_id INTEGER PRIMARY KEY,
+    sierra_data_tag_id SERIAL PRIMARY KEY,
     sierra_data_id INTEGER REFERENCES sierra_data(sierra_data_id),
-    tag_def_id INTEGER REFERENCES tags_defs(tag_def_id),
+    tag_def_id INTEGER REFERENCES tag_defs(tag_def_id),
     tag_value TEXT
 )
