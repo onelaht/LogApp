@@ -7,108 +7,180 @@ package db
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createAccount = `-- name: CreateAccount :one
 INSERT INTO accounts (
-    name, colDefs, tagDefs, rowData
+    account_name
 ) VALUES (
-    $1, $2, $3, $4
-)
-RETURNING name, coldefs, tagdefs, rowdata
+    $1
+) RETURNING account_id
 `
 
-type CreateAccountParams struct {
-	Name    string
-	Coldefs []byte
-	Tagdefs []byte
-	Rowdata []byte
+func (q *Queries) CreateAccount(ctx context.Context, accountName pgtype.Text) (int32, error) {
+	row := q.db.QueryRow(ctx, createAccount, accountName)
+	var account_id int32
+	err := row.Scan(&account_id)
+	return account_id, err
 }
 
-func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRow(ctx, createAccount,
-		arg.Name,
-		arg.Coldefs,
-		arg.Tagdefs,
-		arg.Rowdata,
+const createColDefConfig = `-- name: CreateColDefConfig :one
+INSERT INTO column_def_config (
+    account_id, col_def_config
+) VALUES (
+    $1, $2
+) RETURNING  account_id
+`
+
+type CreateColDefConfigParams struct {
+	AccountID    int32
+	ColDefConfig []byte
+}
+
+func (q *Queries) CreateColDefConfig(ctx context.Context, arg CreateColDefConfigParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createColDefConfig, arg.AccountID, arg.ColDefConfig)
+	var account_id int32
+	err := row.Scan(&account_id)
+	return account_id, err
+}
+
+const createSierraData = `-- name: CreateSierraData :one
+INSERT INTO sierra_data (
+    account_id, symbol, entry_datetime, trade_type, duration, profit_loss, cumulative_profit_loss,
+    max_open_profit, max_open_loss, exit_datetime, commission, max_open_quantity, trade_quantity, entry_price,
+    exit_price, max_closed_quantity, flat_to_flat_profit_loss, flat_to_flat_max_open_profit, flat_to_flat_max_open_loss,
+    entry_efficiency, total_efficiency, high_price_while_open, low_price_while_open, note, open_position_quantity,
+    close_position_quantity
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9,
+    $10, $11, $12, $13, $14, $15, $16,
+    $17, $18, $19, $20, $21, $22,
+    $23, $24, $25, $26
+) RETURNING sierra_data_id
+`
+
+type CreateSierraDataParams struct {
+	AccountID               pgtype.Int4
+	Symbol                  pgtype.Text
+	EntryDatetime           pgtype.Timestamp
+	TradeType               pgtype.Text
+	Duration                pgtype.Text
+	ProfitLoss              pgtype.Numeric
+	CumulativeProfitLoss    pgtype.Numeric
+	MaxOpenProfit           pgtype.Numeric
+	MaxOpenLoss             pgtype.Numeric
+	ExitDatetime            pgtype.Timestamp
+	Commission              pgtype.Numeric
+	MaxOpenQuantity         pgtype.Int4
+	TradeQuantity           pgtype.Int4
+	EntryPrice              pgtype.Numeric
+	ExitPrice               pgtype.Numeric
+	MaxClosedQuantity       pgtype.Int4
+	FlatToFlatProfitLoss    pgtype.Numeric
+	FlatToFlatMaxOpenProfit pgtype.Numeric
+	FlatToFlatMaxOpenLoss   pgtype.Numeric
+	EntryEfficiency         pgtype.Numeric
+	TotalEfficiency         pgtype.Numeric
+	HighPriceWhileOpen      pgtype.Numeric
+	LowPriceWhileOpen       pgtype.Numeric
+	Note                    pgtype.Text
+	OpenPositionQuantity    pgtype.Int4
+	ClosePositionQuantity   pgtype.Int4
+}
+
+func (q *Queries) CreateSierraData(ctx context.Context, arg CreateSierraDataParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createSierraData,
+		arg.AccountID,
+		arg.Symbol,
+		arg.EntryDatetime,
+		arg.TradeType,
+		arg.Duration,
+		arg.ProfitLoss,
+		arg.CumulativeProfitLoss,
+		arg.MaxOpenProfit,
+		arg.MaxOpenLoss,
+		arg.ExitDatetime,
+		arg.Commission,
+		arg.MaxOpenQuantity,
+		arg.TradeQuantity,
+		arg.EntryPrice,
+		arg.ExitPrice,
+		arg.MaxClosedQuantity,
+		arg.FlatToFlatProfitLoss,
+		arg.FlatToFlatMaxOpenProfit,
+		arg.FlatToFlatMaxOpenLoss,
+		arg.EntryEfficiency,
+		arg.TotalEfficiency,
+		arg.HighPriceWhileOpen,
+		arg.LowPriceWhileOpen,
+		arg.Note,
+		arg.OpenPositionQuantity,
+		arg.ClosePositionQuantity,
 	)
-	var i Account
-	err := row.Scan(
-		&i.Name,
-		&i.Coldefs,
-		&i.Tagdefs,
-		&i.Rowdata,
-	)
-	return i, err
+	var sierra_data_id int32
+	err := row.Scan(&sierra_data_id)
+	return sierra_data_id, err
 }
 
-const getAccount = `-- name: GetAccount :one
-SELECT name, coldefs, tagdefs, rowdata
-FROM accounts
-WHERE name = $1
+const createSierraDataTags = `-- name: CreateSierraDataTags :one
+INSERT INTO sierra_data_tags (
+    sierra_data_id, tag_def_id, tag_value
+) VALUES (
+    $1, $2, $3
+) RETURNING sierra_data_tag_id
 `
 
-func (q *Queries) GetAccount(ctx context.Context, name string) (Account, error) {
-	row := q.db.QueryRow(ctx, getAccount, name)
-	var i Account
-	err := row.Scan(
-		&i.Name,
-		&i.Coldefs,
-		&i.Tagdefs,
-		&i.Rowdata,
-	)
-	return i, err
+type CreateSierraDataTagsParams struct {
+	SierraDataID pgtype.Int4
+	TagDefID     pgtype.Int4
+	TagValue     pgtype.Text
 }
 
-const getAccountNames = `-- name: GetAccountNames :many
-SELECT name FROM accounts
-`
-
-func (q *Queries) GetAccountNames(ctx context.Context) ([]string, error) {
-	rows, err := q.db.Query(ctx, getAccountNames)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []string
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			return nil, err
-		}
-		items = append(items, name)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) CreateSierraDataTags(ctx context.Context, arg CreateSierraDataTagsParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createSierraDataTags, arg.SierraDataID, arg.TagDefID, arg.TagValue)
+	var sierra_data_tag_id int32
+	err := row.Scan(&sierra_data_tag_id)
+	return sierra_data_tag_id, err
 }
 
-const getAllAccounts = `-- name: GetAllAccounts :many
-SELECT name, coldefs, tagdefs, rowdata FROM accounts
+const createTagDefConfig = `-- name: CreateTagDefConfig :one
+INSERT INTO tag_def_config (
+    account_id, tag_def_config
+) VALUES (
+    $1, $2
+) RETURNING account_id
 `
 
-func (q *Queries) GetAllAccounts(ctx context.Context) ([]Account, error) {
-	rows, err := q.db.Query(ctx, getAllAccounts)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Account
-	for rows.Next() {
-		var i Account
-		if err := rows.Scan(
-			&i.Name,
-			&i.Coldefs,
-			&i.Tagdefs,
-			&i.Rowdata,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type CreateTagDefConfigParams struct {
+	AccountID    int32
+	TagDefConfig []byte
+}
+
+func (q *Queries) CreateTagDefConfig(ctx context.Context, arg CreateTagDefConfigParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createTagDefConfig, arg.AccountID, arg.TagDefConfig)
+	var account_id int32
+	err := row.Scan(&account_id)
+	return account_id, err
+}
+
+const createTagDefs = `-- name: CreateTagDefs :one
+INSERT INTO tag_defs (
+    account_id, tag_name
+) VALUES (
+    $1, $2
+) RETURNING tag_def_id
+`
+
+type CreateTagDefsParams struct {
+	AccountID pgtype.Int4
+	TagName   pgtype.Text
+}
+
+func (q *Queries) CreateTagDefs(ctx context.Context, arg CreateTagDefsParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createTagDefs, arg.AccountID, arg.TagName)
+	var tag_def_id int32
+	err := row.Scan(&tag_def_id)
+	return tag_def_id, err
 }

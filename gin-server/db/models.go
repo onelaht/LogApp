@@ -4,9 +4,65 @@
 
 package db
 
+import (
+	"github.com/jackc/pgx/v5/pgtype"
+)
+
 type Account struct {
-	Name    string
-	Coldefs []byte
-	Tagdefs []byte
-	Rowdata []byte
+	AccountID   int32
+	AccountName pgtype.Text
+}
+
+type ColumnDefConfig struct {
+	AccountID    int32
+	ColDefConfig []byte
+}
+
+type SierraDataTag struct {
+	SierraDataTagID int32
+	SierraDataID    pgtype.Int4
+	TagDefID        pgtype.Int4
+	TagValue        pgtype.Text
+}
+
+type SierraDatum struct {
+	SierraDataID            int32
+	AccountID               pgtype.Int4
+	Symbol                  pgtype.Text
+	EntryDatetime           pgtype.Timestamp
+	TradeType               pgtype.Text
+	Duration                pgtype.Text
+	ProfitLoss              pgtype.Numeric
+	CumulativeProfitLoss    pgtype.Numeric
+	MaxOpenProfit           pgtype.Numeric
+	MaxOpenLoss             pgtype.Numeric
+	ExitDatetime            pgtype.Timestamp
+	Commission              pgtype.Numeric
+	MaxOpenQuantity         pgtype.Int4
+	TradeQuantity           pgtype.Int4
+	EntryPrice              pgtype.Numeric
+	ExitPrice               pgtype.Numeric
+	MaxClosedQuantity       pgtype.Int4
+	FlatToFlatProfitLoss    pgtype.Numeric
+	FlatToFlatMaxOpenProfit pgtype.Numeric
+	FlatToFlatMaxOpenLoss   pgtype.Numeric
+	EntryEfficiency         pgtype.Numeric
+	ExitEfficiency          pgtype.Numeric
+	TotalEfficiency         pgtype.Numeric
+	HighPriceWhileOpen      pgtype.Numeric
+	LowPriceWhileOpen       pgtype.Numeric
+	Note                    pgtype.Text
+	OpenPositionQuantity    pgtype.Int4
+	ClosePositionQuantity   pgtype.Int4
+}
+
+type TagDef struct {
+	TagDefID  int32
+	AccountID pgtype.Int4
+	TagName   pgtype.Text
+}
+
+type TagDefConfig struct {
+	AccountID    int32
+	TagDefConfig []byte
 }
