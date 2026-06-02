@@ -72,12 +72,12 @@ func setMap(data [][]string) []map[string]string {
 	var rows []map[string]string
 	// traverse through each tuple (exception to col headers)
 	for i := 1; i < len(data); i++ {
-		// create map for each row)
+		// create map for each row
 		row := make(map[string]string)
 		// loop through each attribute
 		for j := 0; j < len(data[i]); j++ {
-			// if empty, skip tuple
-			if data[i][0] == "" {
+			// if empty or contains Account and Cum. PL data, skip tuple
+			if data[i][0] == "" || data[0][j] == "Account\r" || data[0][j] == "Cumulative Profit/Loss (C)" {
 				continue
 			}
 			// fix formatting and set to individual tuple map
@@ -97,8 +97,6 @@ func setMap(data [][]string) []map[string]string {
 // - returns same value if case is not specified
 func adjustFormatting(colType string, colValue string) string {
 	switch colType {
-	case "Account\r":
-		return strings.TrimRight(colValue, "\r")
 	case "Duration":
 		intArr := make([]int, 0)
 		for _, str := range strings.Split(colValue, ":") {
