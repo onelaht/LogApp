@@ -40,6 +40,14 @@ INSERT INTO tag_defs (
     $1, $2
 ) RETURNING tag_def_id;
 
+-- name: DoesTagDefExists :one
+SELECT EXISTS (
+    SELECT 1
+    FROM tag_defs
+    WHERE account_id = $1
+    AND tag_name = $2
+);
+
 -- name: CreateSierraDataTags :one
 INSERT INTO sierra_data_tags (
     sierra_data_id, tag_def_id, tag_value
